@@ -75,3 +75,69 @@ Generiamo le pagine per Login/Register
 ```bash
  ionic generate page pages/login
 ```
+
+## Add AuthFire
+in app.module.ts:
+
+```bash
+ import { provideAuth, getAuth } from '@angular/fire/auth';
+ ...
+  imports: [
+    ...
+    provideAuth(()=>getAuth()),
+  ],
+```
+
+## Generate services
+le logiche condivise (come quelle di Capacitor) possono essere incapsulate in un service:
+```bash
+ ionic generate service services/loginService
+```
+nel service iniettiamo l'auth e creiamo i metodi
+
+```bash
+import { Auth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword } from '@angular/fire/auth';
+```
+
+## Service usage into component
+inietto il service nel component
+
+```bash
+  import { AuthFireService } from 'src/app/services/auth-fire.service';
+  ...
+  constructor(
+    ...
+    private authService: AuthFireService
+  ) { }
+```
+
+
+## Manage routes
+
+Possiamo gestire le rotte per utenti autentic/ non autent.
+
+In app.routing.module.ts:
+```bash
+import { canActivate, redirectUnauthorizedTo, redirectLoggedInTo } from '@angular/fire/compat/auth-guard';
+
+const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['']);
+const redirectLoggedInToHome = () => redirectLoggedInTo(['home']);
+
+...
+
+{
+    path: '',
+    loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule),
+    ...canActivate(redirectLoggedInToHome)
+  },
+  {
+    path: 'home',
+    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule),
+    ...canActivate(redirectUnauthorizedToLogin)
+  },
+
+...
+
+```
+
+

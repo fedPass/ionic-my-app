@@ -1,20 +1,21 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Blank
+      Dashboard
     </ion-title>
+    <ion-icon class="ion-padding-start" name="log-out" (click)="logout()"></ion-icon>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+<ion-content>
+  <strong class="ion-padding">Hi
+    <span *ngIf="user && user.displayName">{{user.displayName}}</span>
+  </strong>
+  <ion-card>
+    <img *ngIf="user && user.imageUrl" [src]="user.imageUrl" />
+    <ion-card-header>
+      <ion-card-subtitle>{{user.email}}</ion-card-subtitle>
+      <ion-card-title *ngIf="user && user.displayName">{{user.displayName}}</ion-card-title>
+    </ion-card-header>
+  </ion-card>
 </ion-content>

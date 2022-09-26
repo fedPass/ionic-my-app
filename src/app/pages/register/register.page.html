@@ -1,10 +1,11 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>register</ion-title>
+    <ion-title>MyApp</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <h1 class="ion-text-center">Crea un nuovo account!</h1>
   <ion-grid>
     <ion-row>
       <ion-col align-self-center>
@@ -13,7 +14,7 @@
         <form [formGroup]="credentials" (ngSubmit)="register()">
 
           <ion-item>
-            <ion-input type="text" placeholder="username"></ion-input>
+            <ion-input type="text" placeholder="username" formControlName="username"></ion-input>
           </ion-item>
 
           <ion-item>
@@ -27,15 +28,18 @@
           </ion-item>
 
           <ion-item>
-            <ion-input type="file" placeholder="avatar"></ion-input>
+            <ion-input type="file" placeholder="avatar" formControlName="avatarImg"></ion-input>
           </ion-item>
 
           <ion-button expand="full" type="submit" [disabled]="!credentials.valid">Registrati</ion-button>
 
         </form>
 
-        <span class="already ion-pagging-top">Already a user?</span>
-        <ion-button [routerLink]="['/login']" expand="block" color="warning">Login</ion-button>
+        <div class="ion-padding-top">
+          <p class="already ion-text-center">Already a user?</p>
+          <ion-button [routerLink]="['/login']" expand="block" color="warning">Login</ion-button>
+        </div>
+
 
       </ion-col>
     </ion-row>

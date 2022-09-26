@@ -9,17 +9,17 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule),
-    // ...canActivate(redirectLoggedInToHome)
+    ...canActivate(redirectLoggedInToHome)
   },
   {
     path: 'home',
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule),
-    // ...canActivate(redirectUnauthorizedToLogin)
+    ...canActivate(redirectUnauthorizedToLogin)
   },
   {
     path: 'register',
     loadChildren: () => import('./pages/register/register.module').then( m => m.RegisterPageModule),
-    // ...canActivate(redirectLoggedInToHome)
+    ...canActivate(redirectLoggedInToHome)
 
   },
   {

@@ -13,12 +13,15 @@ import { environment } from 'src/environments/environment';
 
 import { provideAuth, getAuth } from '@angular/fire/auth';
 
+import { AngularFireModule} from '@angular/fire/compat';
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
     AppRoutingModule,
+    AngularFireModule.initializeApp(environment.firebase), //trick per evitare error in console
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
     provideAuth(()=>getAuth())
