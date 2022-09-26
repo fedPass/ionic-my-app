@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>MyApp</ion-title>
+    <ion-title>register</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -9,9 +9,12 @@
     <ion-row>
       <ion-col align-self-center>
 
-        <h1 class="ion-text-center">Accedi al tuo account!</h1>
+        <!-- ricordi di importare nel module ReactiveFormsModule per usare formGroup -->
+        <form [formGroup]="credentials" (ngSubmit)="register()">
 
-        <form [formGroup]="credentials" (ngSubmit)="login()">
+          <ion-item>
+            <ion-input type="text" placeholder="username"></ion-input>
+          </ion-item>
 
           <ion-item>
             <ion-input type="email" placeholder="email" formControlName="email"></ion-input>
@@ -23,15 +26,16 @@
             <ion-note slot="error" *ngIf="(password.dirty || password.touched) && password.errors">Password minimo 6 caratteri</ion-note>
           </ion-item>
 
-          <ion-button expand="full" type="submit" [disabled]="!credentials.valid">Login</ion-button>
+          <ion-item>
+            <ion-input type="file" placeholder="avatar"></ion-input>
+          </ion-item>
+
+          <ion-button expand="full" type="submit" [disabled]="!credentials.valid">Registrati</ion-button>
 
         </form>
 
-        <div class="ion-padding-top">
-          <p class="already ion-text-center">Non hai un account?</p>
-          <ion-button [routerLink]="['/register']" expand="block" color="warning">Registrati</ion-button>
-        </div>
-
+        <span class="already ion-pagging-top">Already a user?</span>
+        <ion-button [routerLink]="['/login']" expand="block" color="warning">Login</ion-button>
 
       </ion-col>
     </ion-row>

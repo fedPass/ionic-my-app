@@ -70,7 +70,8 @@ in app.module.ts
     })
     export class AppModule { }
 ```
-## Generate components
+## Generate pages 
+Generiamo le pagine per Login/Register
 ```bash
  ionic generate page pages/login
 ```
