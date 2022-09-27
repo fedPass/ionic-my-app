@@ -10,6 +10,7 @@ import { AuthFireService } from '../services/auth-fire.service';
 })
 export class HomePage implements OnInit {
   user = null;
+  positionsList = [];
 
   constructor(
     private auth: AuthFireService,
@@ -21,9 +22,14 @@ export class HomePage implements OnInit {
   ngOnInit(): void {
   }
 
-  logout() {
-    this.auth.logout();
-    this.router.navigateByUrl('login', {replaceUrl: true });
+  async logout() {
+    await this.auth.logout();
+    this.router.navigateByUrl('/', {replaceUrl: true });
+  }
+
+  addNewPosition(){
+    //code
+    console.log('click add new position');
   }
 
 }

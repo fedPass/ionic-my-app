@@ -99,7 +99,7 @@ nel service iniettiamo l'auth e creiamo i metodi
 import { Auth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword } from '@angular/fire/auth';
 ```
 
-## Service usage into component
+## Use Service into component
 inietto il service nel component
 
 ```bash
@@ -140,4 +140,6 @@ const redirectLoggedInToHome = () => redirectLoggedInTo(['home']);
 
 ```
 
+## Get user data in home component
 
+Inietto authFireService nel componente Home per recuperare info user loggato e mostrarle in dashboard 

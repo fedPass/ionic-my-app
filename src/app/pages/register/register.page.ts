@@ -48,7 +48,7 @@ export class RegisterPage implements OnInit {
         if (userCurr) {
           this.router.navigateByUrl(`/home`,{replaceUrl: true});
         } else {
-          alert('Refister error');
+          alert('Register error');
         }
       }
     );

@@ -1,21 +1,62 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Dashboard
+<ion-header>
+  <ion-toolbar color="success">
+    <ion-title class="ion-float-left">
+      <strong>Dashboard</strong>
     </ion-title>
-    <ion-icon class="ion-padding-start" name="log-out" (click)="logout()"></ion-icon>
+    <ion-icon class="ion-float-right ion-padding-end" name="log-out" size="large" (click)="logout()"></ion-icon>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <strong class="ion-padding">Hi
-    <span *ngIf="user && user.displayName">{{user.displayName}}</span>
-  </strong>
-  <ion-card>
-    <img *ngIf="user && user.imageUrl" [src]="user.imageUrl" />
+<ion-content class="ion-padding-top">
+
+  <p class="ion-text-center">
+    <ion-icon  name="bonfire" size="large" color="success"></ion-icon>
+  </p>
+
+  <p class="ion-text-center">
+    <strong>Hi
+      <span *ngIf="user && user.displayName">{{user.displayName}} !</span>
+    </strong>
+  </p>
+
+  <ion-card class="ion-padding">
     <ion-card-header>
-      <ion-card-subtitle>{{user.email}}</ion-card-subtitle>
-      <ion-card-title *ngIf="user && user.displayName">{{user.displayName}}</ion-card-title>
+      <ion-card-title>Le tue info</ion-card-title>
     </ion-card-header>
+    <ion-row class="ion-justify-content-center">
+      <ion-avatar>
+        <img *ngIf="user && user.photoURL; else noImgAvatar" [src]="user.photoURL" />
+        <ng-template #noImgAvatar>
+          <ion-icon  name="person" size="large"></ion-icon>
+        </ng-template>
+      </ion-avatar>
+    </ion-row>
+
+    <ion-card-content>
+      <ion-card-subtitle *ngIf="user && user.displayName">Username: {{user.displayName}}</ion-card-subtitle>
+      <ion-card-subtitle>Email: {{user.email}}</ion-card-subtitle>
+    </ion-card-content>
   </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title> Lista luoghi visitati</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list *ngIf="positionsList.length !== 0; else noPositionsList">
+        <ion-item>
+
+        </ion-item>
+      </ion-list>
+      <ng-template #noPositionsList>
+        <p>Non hai ancora inserito luoghi visitati</p>
+      </ng-template>
+      <ion-item lines="none">
+        <ion-button slot="end" color="success" (click)="addNewPosition()">
+          <ion-icon name="add"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
 </ion-content>
