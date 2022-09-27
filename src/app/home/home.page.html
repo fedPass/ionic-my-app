@@ -53,14 +53,21 @@
       <ion-list *ngIf="positionsList.length !== 0; else noPositionsList">
 
         <ion-item *ngFor="let position of positionsList">
+
           <ion-icon name="pin"></ion-icon>
           <ion-label  class="ion-margin-start">
             <h2>{{position.name}}</h2>
             <p style="font-style: italic;">Lat: {{position.coords.lat}} - Lon: {{position.coords.lon}}</p>
           </ion-label>
-          <ion-button slot="end" color="danger" (click)="deletePosition(position)">
+
+          <ion-button color="warning" (click)="updatePosition(position)">
+            <ion-icon name="build"></ion-icon>
+          </ion-button>
+
+          <ion-button color="danger" (click)="deletePosition(position)">
             <ion-icon name="trash"></ion-icon>
           </ion-button>
+
         </ion-item>
       </ion-list>
       <ng-template #noPositionsList>

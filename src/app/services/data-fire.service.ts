@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, addDoc, getDocs, deleteDoc, collection, collectionData, doc } from '@angular/fire/firestore';
+import { Firestore, addDoc, updateDoc, deleteDoc, collection, collectionData, doc } from '@angular/fire/firestore';
 import { Geolocation } from '@capacitor/geolocation';
 import { Observable } from 'rxjs';
 
@@ -15,7 +15,6 @@ export class DataFireService {
     ) { }
 
   async addPosition(position,user) {
-    console.log('position received', position);
     const coords = await Geolocation.getCurrentPosition();
     position.coords = {
       lat : coords.coords.latitude,
@@ -44,6 +43,12 @@ export class DataFireService {
 
   deletePosition(position,user) {
     deleteDoc(doc(this.firestore, `users/${user.uid}/positions/${position.id}`));
+  }
+
+  updateNamePosition(position,user) {
+    return updateDoc(doc(this.firestore, `users/${user.uid}/positions/${position.id}`), {
+      name: position.name
+    });
   }
 }
 

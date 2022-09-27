@@ -44,11 +44,11 @@ export class HomePage implements OnInit {
       header: 'Inserisci un nuovo luogo visitato',
       buttons: [
         {
-          text: 'Cancel',
+          text: 'Chiudi',
           role: 'cancel'
         },
         {
-          text: 'add',
+          text: 'Aggiugni',
           handler: (res) => {
             this.dataFire.addPosition(
               {
@@ -72,12 +72,43 @@ export class HomePage implements OnInit {
         // }
       ],
     });
-
     alert.present();
   }
 
   deletePosition(position) {
     this.dataFire.deletePosition(position,this.user);
+  }
+
+  async updatePosition(position) {
+    console.log('click update');
+    const alert = await this.alertCtrl.create({
+      header: 'Modifica "' + position.name + '"',
+      buttons: [
+        {
+          text: 'Chiudi',
+          role: 'cancel'
+        },
+        {
+          text: 'Modifica',
+          handler: (res) => {
+            this.dataFire.updateNamePosition(
+              {
+              name: res.name,
+              id: position.id
+              },
+              this.user
+            );
+          }
+        }
+    ],
+      inputs: [
+        {
+          name: 'name',
+          placeholder: position.name,
+        }
+      ],
+    });
+    alert.present();
   }
 
 }
