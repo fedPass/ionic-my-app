@@ -183,3 +183,47 @@ nel service in cui mi serve
   ...
 
 ```
+## Install Leaflet map
+```bash
+  npm i leaflet
+
+```
+
+index.html (import css and javascript for leaflet inside head)
+
+```bash
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+  crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
+
+```
+
+in nuova page per la mappa, mentre nel suo template
+
+```bash
+
+ map.tes:
+
+  ngAfterViewInit() {
+
+    this.map = new Leaflet.Map('map').setView([-25.429397, -49.271165], 10);
+    Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map'
+        }).addTo(this.map);
+
+}
+
+________
+
+map.template 
+
+  <div id="map" class="map"></div>
+
+```
+
+
+

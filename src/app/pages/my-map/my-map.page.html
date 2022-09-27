@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-toolbar color="success">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>La tua mappa</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-title *ngIf="positionsList.length > 0" class="ion-padding">
+    Hai visitato {{positionsList.length}} posto/i
+  </ion-title>
+
+  <div id="map" class="map"></div>
+
+</ion-content>
+

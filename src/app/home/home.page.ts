@@ -65,6 +65,7 @@ export class HomePage implements OnInit {
           placeholder: 'Name',
         },
         //#TODO: come inserire foto? btn che richiama getPhoto()?
+        // UPLOAD FILE: https://firebase.google.com/docs/storage/web/upload-files
         // {
         //   name: 'photo',
         //   placeholder: 'photo',

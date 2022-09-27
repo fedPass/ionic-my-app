@@ -12,15 +12,20 @@ const routes: Routes = [
     ...canActivate(redirectLoggedInToHome)
   },
   {
+    path: 'register',
+    loadChildren: () => import('./pages/register/register.module').then( m => m.RegisterPageModule),
+    ...canActivate(redirectLoggedInToHome)
+
+  },
+  {
     path: 'home',
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule),
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
-    path: 'register',
-    loadChildren: () => import('./pages/register/register.module').then( m => m.RegisterPageModule),
-    ...canActivate(redirectLoggedInToHome)
-
+    path: 'my-map',
+    loadChildren: () => import('./pages/my-map/my-map.module').then( m => m.MyMapPageModule),
+    ...canActivate(redirectUnauthorizedToLogin)
   },
   {
     path: '**',
