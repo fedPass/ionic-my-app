@@ -111,4 +111,33 @@ export class HomePage implements OnInit {
     alert.present();
   }
 
+  async updateUserInfo() {
+    console.log('click update user');
+    const alert = await this.alertCtrl.create({
+      header: 'Modifica "' + this.user.email + '"',
+      buttons: [
+        {
+          text: 'Chiudi',
+          role: 'cancel'
+        },
+        {
+          text: 'Modifica',
+          handler: (res) => {
+            this.auth.updateUserInfo(
+              {
+                displayName: res.displayName
+              }            );
+          }
+        }
+    ],
+      inputs: [
+        {
+          name: 'displayName',
+          placeholder: this.user.displayName,
+        }
+      ],
+    });
+    alert.present();
+  }
+
 }

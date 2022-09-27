@@ -20,21 +20,26 @@
   </p>
 
   <ion-card class="ion-padding ion-text-center">
-    <ion-card-header>
-      <ion-card-title>
-        <strong >Le tue info</strong>
+
+    <ion-card-header class="ion-align-items-center">
+      <ion-card-title class="ion-align-items-center">
+        <strong class="ion-float-left">Le tue info</strong>
       </ion-card-title>
+      <ion-button color="warning" (click)="updateUserInfo()"
+        class="ion-float-right">
+        <ion-icon name="build"></ion-icon>
+      </ion-button>
     </ion-card-header>
-    <ion-row class="ion-justify-content-center">
-      <ion-avatar>
-        <img *ngIf="user && user.photoURL; else noImgAvatar" [src]="user.photoURL" />
-        <ng-template #noImgAvatar>
-          <ion-icon  name="person" size="large"></ion-icon>
-        </ng-template>
-      </ion-avatar>
-    </ion-row>
 
     <ion-card-content>
+      <ion-row class="ion-justify-content-center">
+        <ion-avatar>
+          <img *ngIf="user && user.photoURL; else noImgAvatar" [src]="user.photoURL" />
+          <ng-template #noImgAvatar>
+            <ion-icon  name="person" size="large"></ion-icon>
+          </ng-template>
+        </ion-avatar>
+      </ion-row>
       <ion-card-subtitle *ngIf="user && user.displayName">Username: {{user.displayName}}</ion-card-subtitle>
       <ion-card-subtitle>Email: {{user.email}}</ion-card-subtitle>
     </ion-card-content>

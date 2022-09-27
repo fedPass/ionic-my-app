@@ -72,4 +72,13 @@ export class AuthFireService {
     // console.log('user get profile', user);
     return user;
   }
+
+  updateUserInfo(user) {
+    updateProfile(this.auth.currentUser, {
+      displayName: user.displayName,
+      // photoURL: "https://example.com/jane-q-user/profile.jpg"
+    });
+  }
+
+
 }
