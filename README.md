@@ -186,6 +186,7 @@ nel service in cui mi serve
 ## Install Leaflet map
 ```bash
   npm i leaflet
+  npm i --save-dev @types/leaflet 
 
 ```
 
