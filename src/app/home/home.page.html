@@ -58,7 +58,7 @@
             <h2>{{position.name}}</h2>
             <p style="font-style: italic;">Lat: {{position.coords.lat}} - Lon: {{position.coords.lon}}</p>
           </ion-label>
-          <ion-button slot="end" color="danger">
+          <ion-button slot="end" color="danger" (click)="deletePosition(position)">
             <ion-icon name="trash"></ion-icon>
           </ion-button>
         </ion-item>

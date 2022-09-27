@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, addDoc, getDocs, collection, collectionData } from '@angular/fire/firestore';
+import { Firestore, addDoc, getDocs, deleteDoc, collection, collectionData, doc } from '@angular/fire/firestore';
 import { Geolocation } from '@capacitor/geolocation';
 import { Observable } from 'rxjs';
 
@@ -36,10 +36,14 @@ export class DataFireService {
   getUserPositions(user) {
     // collectionData returns a stream of documents
     const userPosit = collectionData(
-      collection(this.firestore, `users/${user.uid}/positions`)
+      collection(this.firestore, `users/${user.uid}/positions`),{idField: 'id'}
     ) as Observable<Position[]>;
     // console.log(userPosit.subscribe(console.log));
     return userPosit;
+  }
+
+  deletePosition(position,user) {
+    deleteDoc(doc(this.firestore, `users/${user.uid}/positions/${position.id}`));
   }
 }
 

@@ -76,4 +76,8 @@ export class HomePage implements OnInit {
     alert.present();
   }
 
+  deletePosition(position) {
+    this.dataFire.deletePosition(position,this.user);
+  }
+
 }
