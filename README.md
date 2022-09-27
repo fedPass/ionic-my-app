@@ -1,7 +1,6 @@
 # Start new Ionic Project
 
 ## Create an App
-
 ```bash
   ionic start photo-gallery blank --type=angular --capacitor
   cd photo-gallery
@@ -9,7 +8,6 @@
 
 
 ## PWA Elements​
-
 ```bash
   npm install @ionic/pwa-elements
 ```
@@ -22,7 +20,6 @@ in the src/main.ts
   defineCustomElements(window);
 ```
 ## Capacitor Plugins
-
 ```bash
   npm install @capacitor/{plugin}
 ```
@@ -30,7 +27,6 @@ in the src/main.ts
 es: npm install @capacitor/camera @capacitor/preferences @capacitor/filesystem
 
 ## Run App
-
 ```bash
   ionic serve
 ```
@@ -113,7 +109,6 @@ inietto il service nel component
 
 
 ## Manage routes
-
 Possiamo gestire le rotte per utenti autentic/ non autent.
 
 In app.routing.module.ts:
@@ -141,5 +136,50 @@ const redirectLoggedInToHome = () => redirectLoggedInTo(['home']);
 ```
 
 ## Get user data in home component
-
 Inietto authFireService nel componente Home per recuperare info user loggato e mostrarle in dashboard 
+
+## Service to store/retry data 
+*Abbiamo già importato Cloud Firestore (import { getFirestore } from "firebase/firestore"; in app.module)*
+
+Creiamo un service per inviare/prendere dati con Cloud Firestore
+```bash
+  ionic generate service services/dataFire
+```
+
+nel componente
+```bash
+  import { Firestore } from '@angular/fire/firestore';
+  import { addDoc, collection } from 'firebase/firestore'; 
+
+    constructor(
+    private dataService: Firestore
+  ) { }
+
+```
+
+## Install @capacitor/geolocation
+```bash
+  npm install @capacitor/geolocation
+  npx cap sync
+
+```
+
+This API requires the following permissions be added to your AndroidManifest.xml:
+
+```bash
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+  <uses-feature android:name="android.hardware.location.gps" />
+
+```
+
+nel service in cui mi serve
+
+```bash
+  import { Geolocation } from '@capacitor/geolocation';
+  ...
+  const coords = await Geolocation.getCurrentPosition();
+
+  ...
+
+```

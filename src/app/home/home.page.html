@@ -19,9 +19,11 @@
     </strong>
   </p>
 
-  <ion-card class="ion-padding">
+  <ion-card class="ion-padding ion-text-center">
     <ion-card-header>
-      <ion-card-title>Le tue info</ion-card-title>
+      <ion-card-title>
+        <strong >Le tue info</strong>
+      </ion-card-title>
     </ion-card-header>
     <ion-row class="ion-justify-content-center">
       <ion-avatar>
@@ -39,23 +41,43 @@
   </ion-card>
 
   <ion-card>
-    <ion-card-header>
-      <ion-card-title> Lista luoghi visitati</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list *ngIf="positionsList.length !== 0; else noPositionsList">
-        <ion-item>
 
+    <ion-card-header>
+      <ion-card-title class="ion-text-center">
+        <strong >Lista luoghi visitati</strong>
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+
+      <ion-list *ngIf="positionsList.length !== 0; else noPositionsList">
+
+        <ion-item *ngFor="let position of positionsList">
+          <ion-icon name="pin"></ion-icon>
+          <ion-label  class="ion-margin-start">
+            <h2>{{position.name}}</h2>
+            <p style="font-style: italic;">Lat: {{position.coords.lat}} - Lon: {{position.coords.lon}}</p>
+          </ion-label>
+          <ion-button slot="end" color="danger">
+            <ion-icon name="trash"></ion-icon>
+          </ion-button>
         </ion-item>
       </ion-list>
       <ng-template #noPositionsList>
         <p>Non hai ancora inserito luoghi visitati</p>
       </ng-template>
-      <ion-item lines="none">
-        <ion-button slot="end" color="success" (click)="addNewPosition()">
-          <ion-icon name="add"></ion-icon>
-        </ion-button>
-      </ion-item>
+
+      <ion-button expand="full" color="success" (click)="addNewPosition()" >
+        <ion-icon name="add" class="ion-padding-end"></ion-icon>
+        Aggiungi nuovo luogo
+      </ion-button>
+
+      <ion-button expand="full" color="warning" [routerLink]=""
+      class="ion-margin-top">
+        <ion-icon name="map" class="ion-padding-end"></ion-icon>
+        Visualizza la tua mappa
+      </ion-button>
+
     </ion-card-content>
   </ion-card>
 

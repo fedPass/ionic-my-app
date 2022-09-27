@@ -53,18 +53,11 @@ export class AuthFireService {
   async getAuthState() {
     onAuthStateChanged(this.auth, (user) => {
       if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        // const uid = user.uid;
-        // if (user.displayName) {
-        //   const name = user.displayName;
-        // }
-        console.log('Login');
+        console.log('User auth',user);
         return user;
-        // ...
       } else {
         // User is signed out
-        console.log('Logout');
+        console.log('User NOT auth');
         return null;
       }
     });
@@ -76,7 +69,7 @@ export class AuthFireService {
 
   getUserProfile() {
     const user = this.auth.currentUser;
-    console.log('user get profile', user);
+    // console.log('user get profile', user);
     return user;
   }
 }
