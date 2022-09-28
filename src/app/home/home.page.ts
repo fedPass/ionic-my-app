@@ -31,7 +31,7 @@ export class HomePage implements OnInit {
   async updateUserInfo() {
     // console.log('click update user');
     const alert = await this.alertCtrl.create({
-      header: 'Modifica "' + this.user.email + '"',
+      header: 'Modifica username per "' + this.user.email + '"',
       buttons: [
         {
           text: 'Chiudi',
@@ -43,7 +43,8 @@ export class HomePage implements OnInit {
             this.auth.updateUserInfo(
               {
                 displayName: res.displayName
-              }            );
+              }
+             );
           }
         }
     ],
