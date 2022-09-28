@@ -42,7 +42,7 @@ export class MyMapPage implements OnInit, AfterViewInit {
     here.bindPopup(`<b>Sei qui!</b><br>Lat: ` + coords.coords.latitude + `, Lon: ` + coords.coords.longitude).openPopup();
 
     //#TODO: i need to retry user positions to loop its and add marker
-    console.log('positionsList',this.positionsList);
+    // console.log('positionsList',this.positionsList);
     this.positionsList.forEach( position => {
       const latitude = position.coords.lat;
       const longitude = position.coords.lon;

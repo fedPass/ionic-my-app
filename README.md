@@ -226,5 +226,66 @@ map.template
 
 ```
 
+## Create component to share elements
+creiamo una componente "lista posizioni" da riutilizzare sia nella home che nella pagina my-map
+
+```bash
+  npm i leaflet
+  npm i --save-dev @types/leaflet 
+
+```
+
+per condividere i componenti con gli altri moduli è necessario creare un modulo condiviso
+
+```bash
+  ionic g module modules/shared
+```
+nel module.ts condiviso
+```bash
+
+    import { NgModule } from '@angular/core';
+    import { CommonModule } from '@angular/common';
+    import { HeaderComponent } from './header/header.component';
+
+    @NgModule({
+    declarations: [HeaderComponent],
+    imports: [
+    CommonModule,
+    ],
+    exports: [HeaderComponent],
+    })
+    export class SharedComponentModule { }
+    
+```
+adesso possiamo usare <app-header></app-header> nei vari template, ma dobbiamo prima importare nel loro module il module condiviso:
+
+```bash
+  ...
+  import { SharedComponentModule } from '../component/shared-component.module';
+    ...
+
+  @NgModule({
+  imports: [
+    ...
+    SharedComponentModule,
+    ...
+  
+```
+
+## Use Platform by ionic/angular to get info about device
+importare nel componente
+
+```bash
+  import { Platform } from '@ionic/angular';
+
+  @Component({...})
+  export class MyPage {
+    constructor(public platform: Platform) {
+
+    }
+  }
+
+```
+
 
 

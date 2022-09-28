@@ -14,9 +14,12 @@ import { environment } from 'src/environments/environment';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 
 import { AngularFireModule} from '@angular/fire/compat';
+import { ComponentsModule } from './components/components.module';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [
+    AppComponent,
+  ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -24,7 +27,8 @@ import { AngularFireModule} from '@angular/fire/compat';
     AngularFireModule.initializeApp(environment.firebase), //trick per evitare error in console
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
-    provideAuth(()=>getAuth())
+    provideAuth(()=>getAuth()),
+    ComponentsModule
 
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],

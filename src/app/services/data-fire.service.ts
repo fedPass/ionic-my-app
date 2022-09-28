@@ -21,10 +21,12 @@ export class DataFireService {
       lon : coords.coords.longitude,
       alt : coords.coords.altitude,
     };
+
     try {
       const docRef = await addDoc(collection(this.firestore, `users/${user.uid}/positions`), {
         name: position.name,
-        coords: position.coords
+        coords: position.coords,
+        created: this.getNowISOString()
       });
       console.log('Document written with ID: ', docRef.id);
     } catch (e) {
@@ -49,6 +51,17 @@ export class DataFireService {
     return updateDoc(doc(this.firestore, `users/${user.uid}/positions/${position.id}`), {
       name: position.name
     });
+  }
+
+  getNowISOString(){
+    const date = new Date();
+    const nowUtc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(),
+                date.getUTCDate(), date.getUTCHours(),
+                date.getUTCMinutes(), date.getUTCSeconds());
+    const nowISOString = date.toISOString();
+    console.log('date 1',new Date(nowUtc));
+    console.log('date 2', date.toISOString());
+    return nowISOString;
   }
 }
 
