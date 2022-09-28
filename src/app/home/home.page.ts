@@ -4,6 +4,9 @@ import { AuthFireService } from '../services/auth-fire.service';
 
 import { AlertController } from '@ionic/angular';
 
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { DataFireService } from '../services/data-fire.service';
+
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -11,13 +14,21 @@ import { AlertController } from '@ionic/angular';
 })
 export class HomePage implements OnInit {
   user = null;
+  userAvatarUrl = null;
 
   constructor(
     private auth: AuthFireService,
     private router: Router,
     private alertCtrl: AlertController,
+    private data: DataFireService
   ) {
     this.user = this.auth.getUserProfile();
+    this.data.getUserProfilePhotoUrl().then(
+      (url) => {
+        this.userAvatarUrl = url;
+      }
+    );
+
   }
 
   ngOnInit(): void {
@@ -54,6 +65,35 @@ export class HomePage implements OnInit {
           placeholder: this.user.displayName,
         }
       ],
+    });
+    alert.present();
+  }
+
+  async updateUserPhoto() {
+    const alert = await this.alertCtrl.create({
+      header: 'Cambia foto profilo',
+      buttons: [
+        {
+          text: 'Chiudi',
+          role: 'cancel'
+        },
+        {
+          text: 'Carica/Scatta',
+          handler: async () => {
+            const photo = await Camera.getPhoto({
+              quality: 90,
+              allowEditing: true,
+              resultType: CameraResultType.Uri,
+              source: CameraSource.Camera
+            });
+            if (photo) {
+              const photoUrl = await this.data.uploadImageForUser(photo, true);
+              console.log('photourl',photoUrl);
+              this.userAvatarUrl = photoUrl;
+            }
+        }
+      }
+    ]
     });
     alert.present();
   }

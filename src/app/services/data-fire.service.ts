@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Firestore, addDoc, updateDoc, deleteDoc, collection, collectionData, doc } from '@angular/fire/firestore';
+import { getDownloadURL, ref, uploadBytes, uploadBytesResumable, uploadString } from '@angular/fire/storage';
 import { Geolocation } from '@capacitor/geolocation';
 import { Observable } from 'rxjs';
+
+import { Storage } from '@angular/fire/storage';
+import { Auth } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +15,10 @@ export class DataFireService {
   userPositions = [];
 
   constructor(
-    private firestore: Firestore
+    private firestore: Firestore,
+    private authFirebase: Auth,
+    private storage: Storage
+
     ) { }
 
   async addPosition(position,user) {
@@ -62,6 +69,77 @@ export class DataFireService {
     console.log('date 1',new Date(nowUtc));
     console.log('date 2', date.toISOString());
     return nowISOString;
+  }
+
+  async uploadImageForUser(cameraFile, avatar = false) {
+    const user = this.authFirebase.currentUser;
+    const imgFormat = cameraFile.format;
+    let path = '';
+    if (avatar) {
+      path = `uploads/${user.uid}/profileImage`;
+    } else {
+      path = `uploads/${user.uid}/`+ new Date().getTime() + '.' + imgFormat;
+    }
+
+    const metadata = {
+      contentType: `image/${imgFormat}`,
+    };
+
+    //creare referenza per il percorso dell'immagine
+    const storageRef = ref(this.storage, path);
+
+    const uploadTask = uploadBytesResumable(storageRef, cameraFile, metadata);
+
+    // Listen for state changes, errors, and completion of the upload.
+    uploadTask.on('state_changed',
+    (snapshot) => {},
+    (error) => {
+      switch (error.code) {
+        case 'storage/unauthorized':
+          // User doesn't have permission to access the object
+          alert('User non ha i permessi');
+          break;
+        case 'storage/canceled':
+          // User canceled the upload
+          alert('User ha annullato upload');
+          break;
+
+        case 'storage/unknown':
+          // Unknown error occurred, inspect error.serverResponse
+          alert('Errore sconosciuto: ' + error.serverResponse);
+          break;
+      }
+    },
+    () => {
+      // Upload completed successfully, now we can get the download URL
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        console.log('File available at', downloadURL);
+        return downloadURL;
+      });
+    }
+    );
+
+    // const uploadTask = uploadBytes(storageRef, cameraFile, metadata )
+    // .then((snapshot) => {
+    //   console.log('Uploaded a blob or file!', snapshot);
+    //   // const imageUrl = getDownloadURL(snapshot.ref)
+    //   // .then((downloadUrl) => {
+    //   //   const imageUrlString = downloadUrl;
+    //   //   console.log('downloadUrl',downloadUrl);
+    //   //   return imageUrlString;
+    //   // });
+    // })
+    // .catch(error => {
+    //   console.log(error);
+    //   return null;
+    // });
+
+  }
+
+  async getUserProfilePhotoUrl() {
+    const user = this.authFirebase.currentUser;
+    const storeRef = ref(this.storage, `uploads/${user.uid}/profileImage`);
+    return await getDownloadURL(storeRef);
   }
 }
 

@@ -287,5 +287,77 @@ importare nel componente
 
 ```
 
+## Use Cloud Storage to store/retry user contents
+importare nel ngModule il fireStorageModule
 
+```bash
+
+import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+
+@NgModule({
+  imports: [
+    AngularFireStorageModule
+
+```
+
+nel componente
+
+
+```bash
+
+  import { AngularFireStorage } from '@angular/fire/compat/storage';
+
+  constructor(private storage: AngularFireStorage) { 
+
+      uploadFile(event) {
+      const file = event.target.files[0];
+      const filePath = 'name-your-file-path-here';
+      const task = this.storage.upload(filePath, file);
+    }
+
+    or 
+
+    const storageRef = ref(storage, 'some-child');
+
+    // 'file' comes from the Blob or File API
+    uploadBytes(storageRef, file).then((snapshot) => {
+      console.log('Uploaded a blob or file!');
+    });
+
+
+```
+
+## At the end
+Add the platform:
+
+```bash
+  # iOS
+ionic cordova platform add ios
+
+# Android
+ionic cordova platform add android 
+
+```
+
+Next, create the runnable build:
+
+```bash
+# iOS
+ionic cordova build ios
+
+# Android
+ionic cordova build android
+
+```
+
+Finally, start the app on the device:
+
+```bash
+# iOS
+ionic cordova run ios -l
+
+# Android
+ionic cordova run android -l
+
+```
 

@@ -16,6 +16,9 @@ import { provideAuth, getAuth } from '@angular/fire/auth';
 import { AngularFireModule} from '@angular/fire/compat';
 import { ComponentsModule } from './components/components.module';
 
+// import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { provideStorage, getStorage } from '@angular/fire/storage';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,6 +31,8 @@ import { ComponentsModule } from './components/components.module';
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
     provideAuth(()=>getAuth()),
+    // AngularFireStorageModule,
+    provideStorage(() => getStorage()),
     ComponentsModule
 
   ],
