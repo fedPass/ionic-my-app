@@ -17,41 +17,45 @@ export class MyMapPage implements OnInit, AfterViewInit {
     private dataFire: DataFireService,
     private auth: Auth
   ) {
-    this.dataFire.getUserPositions(this.auth.currentUser)
-    .subscribe( (res)  => {
-      this.positionsList = res;
-    });
   }
 
-  ngOnInit() {
-  }
-
-  async ngAfterViewInit() {
-
+  async ngOnInit() {
     // create map with current coords
     const coords = await Geolocation.getCurrentPosition();
     this.map = new Leaflet.Map('map').setView([coords.coords.latitude, coords.coords.longitude], 10);
     Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: 'Map'
-        }).addTo(this.map);
-
-    //add marker for here
-    const here = Leaflet.marker([coords.coords.latitude, coords.coords.longitude], {
-      title: 'Sei qui!'
     }).addTo(this.map);
-    here.bindPopup(`<b>Sei qui!</b><br>Lat: ` + coords.coords.latitude + `, Lon: ` + coords.coords.longitude).openPopup();
 
-    //#TODO: i need to retry user positions to loop its and add marker
-    // console.log('positionsList',this.positionsList);
-    this.positionsList.forEach( position => {
-      const latitude = position.coords.lat;
-      const longitude = position.coords.lon;
-      Leaflet.marker([latitude, longitude], {
-        title: position.name
-      }).addTo(this.map);
+  }
+
+  ngAfterViewInit() {
+
+    this.dataFire.getUserPositions(this.auth.currentUser)
+    .subscribe( (res)  => {
+      this.positionsList = res;
+      this.positionsList.forEach( (position, i) => {
+        const latitude = position.coords.lat;
+        const longitude = position.coords.lon;
+        const marker = Leaflet.marker([latitude, longitude], {
+          title: position.name
+        }).addTo(this.map);
+        marker.bindPopup(`<b>${position.name}</b><br>`).openPopup();
+
+      });
+      //add marker for here
+      Geolocation.getCurrentPosition().then(
+        (resPosition) => {
+          const here = Leaflet.marker([resPosition.coords.latitude, resPosition.coords.longitude], {
+            title: 'here'
+          }).addTo(this.map);
+          here.bindPopup(`<b>Sei qui!</b><br>Lat: ` + resPosition.coords.latitude + `, Lon: ` + resPosition.coords.longitude).openPopup();
+        }
+      );
     });
 
+  }
 
-}
+  // #TODO: se sono in hover sulla posizione nella lista attiva marker sulla mappa
 
 }

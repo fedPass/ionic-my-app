@@ -69,7 +69,7 @@ export class AuthFireService {
 
   getUserProfile() {
     const user = this.auth.currentUser;
-    // console.log('user get profile', user);
+    console.log('user get profile', user);
     return user;
   }
 
