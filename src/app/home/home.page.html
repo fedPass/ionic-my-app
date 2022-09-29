@@ -30,7 +30,7 @@
     <ion-card-content>
 
       <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-        <ion-fab-button (click)="updateUserInfo()"
+        <ion-fab-button (click)="updateUserName()"
         color="success" size="small">
           <ion-icon name="build"></ion-icon>
         </ion-fab-button>
@@ -38,7 +38,7 @@
 
       <ion-row class="ion-justify-content-center">
         <ion-avatar class="ion-margin" (click)="updateUserPhoto()">
-          <img id="imgAvatar" *ngIf="userAvatarUrl; else noImgAvatar" [src]="userAvatarUrl" />
+          <img id="imgAvatar" *ngIf="user.photoURL; else noImgAvatar" [src]="user.photoURL" />
           <ng-template #noImgAvatar>
             <img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" />
           </ng-template>
@@ -48,7 +48,6 @@
       <ion-card-subtitle *ngIf="user && user.displayName">Username: {{user.displayName}}</ion-card-subtitle>
       <ion-card-subtitle>Email: {{user.email}}</ion-card-subtitle>
       <!-- <ion-card-subtitle>{{user | json }}</ion-card-subtitle> -->
-      <!-- {{ userAvatarUrl }} -->
     </ion-card-content>
 
   </ion-card>

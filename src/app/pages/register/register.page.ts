@@ -40,15 +40,16 @@ export class RegisterPage implements OnInit {
   async register() {
     const loading = await this.loading.create();
     await loading.present();
-    const user$ = from(this.authService.register(this.credentials.value));
-    const user = user$.subscribe(
-      (userCurr) => {
+    const user = this.authService.register(this.credentials.value).then(
+      (newUser) => {
         loading.dismiss();
-        console.log(userCurr);
-        if (userCurr) {
+        console.log('newUser', newUser);
+        if (newUser) {
           this.router.navigateByUrl(`/home`,{replaceUrl: true});
+          return newUser;
         } else {
           alert('Register error');
+          return null;
         }
       }
     );

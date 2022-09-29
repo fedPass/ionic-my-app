@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
-import { AuthFireService } from 'src/app/services/auth-fire.service';
+import { AuthFireService, User } from 'src/app/services/auth-fire.service';
 import { DataFireService } from 'src/app/services/data-fire.service';
 import { Platform } from '@ionic/angular';
 
@@ -10,7 +10,7 @@ import { Platform } from '@ionic/angular';
   styleUrls: ['./positions-card.component.scss'],
 })
 export class PositionsCardComponent implements OnInit {
-  user = null;
+  user: User;
   positionsList = [];
   isMapPage = false;
 
@@ -20,8 +20,7 @@ export class PositionsCardComponent implements OnInit {
     private alertCtrl: AlertController,
     public platform: Platform
   ) {
-    // this.user = this.auth.getUserProfile();
-    this.user = this.auth.userData;
+    this.user = this.auth.getUserProfile();
 
     this.dataFire.getUserPositions(this.user)
     .subscribe( (res)  => {
@@ -77,7 +76,6 @@ export class PositionsCardComponent implements OnInit {
   }
 
   async updatePosition(position) {
-    console.log('click update');
     const alert = await this.alertCtrl.create({
       header: 'Modifica "' + position.name + '"',
       buttons: [

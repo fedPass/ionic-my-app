@@ -5,9 +5,7 @@ import { Geolocation } from '@capacitor/geolocation';
 import { Observable } from 'rxjs';
 
 import { Storage } from '@angular/fire/storage';
-import { Auth } from '@angular/fire/auth';
-
-import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { Auth, updateProfile } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +18,6 @@ export class DataFireService {
     private firestore: Firestore,
     private authFirebase: Auth,
     private storage: Storage,
-    private fireStorage: AngularFireStorage
 
     ) { }
 
@@ -69,8 +66,6 @@ export class DataFireService {
                 date.getUTCDate(), date.getUTCHours(),
                 date.getUTCMinutes(), date.getUTCSeconds());
     const nowISOString = date.toISOString();
-    console.log('date 1',new Date(nowUtc));
-    console.log('date 2', date.toISOString());
     return nowISOString;
   }
 
@@ -116,28 +111,20 @@ export class DataFireService {
     },
     () => {
       // Upload completed successfully, now we can get the download URL
-      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+      getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
         console.log('File available at', downloadURL);
+        await updateProfile(user,
+          {
+            photoURL: downloadURL
+          }
+        );
+        // return user;
         return downloadURL;
       });
     }
     );
 
   }
-
-  // uploadUserPh(cameraFile, avatar = false) {
-  //   const user = this.authFirebase.currentUser;
-  //   const imgFormat = cameraFile.format;
-  //   let path = '';
-  //   if (avatar) {
-  //     path = `uploads/${user.uid}/profileImage`;
-  //   } else {
-  //     path = `uploads/${user.uid}/`+ new Date().getTime() + '.' + imgFormat;
-  //   }
-  //   const filePath = 'name-your-file-path-here';
-  //   const refStor = this.fireStorage.ref(filePath);
-  //   const task = refStor.put(cameraFile);
-  // }
 
   async getUserProfilePhotoUrl() {
     const user = this.authFirebase.currentUser;

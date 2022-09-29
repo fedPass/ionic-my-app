@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthFireService } from '../services/auth-fire.service';
+import { AuthFireService, User } from '../services/auth-fire.service';
 
 import { AlertController } from '@ionic/angular';
 
@@ -13,8 +13,7 @@ import { DataFireService } from '../services/data-fire.service';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  user = null;
-  userAvatarUrl = null;
+  user: User;
 
   constructor(
     private auth: AuthFireService,
@@ -22,14 +21,8 @@ export class HomePage implements OnInit {
     private alertCtrl: AlertController,
     private data: DataFireService
   ) {
-    // this.user = this.auth.getUserProfile();
-    this.user = this.auth.userData;
-    this.data.getUserProfilePhotoUrl().then(
-      (url) => {
-        this.userAvatarUrl = url;
-      }
-    );
-
+    //TODO dovrebbe essere un observable di user? forse si!
+    this.user = this.auth.getUserProfile();
   }
 
   ngOnInit(): void {
@@ -40,8 +33,7 @@ export class HomePage implements OnInit {
     this.router.navigateByUrl('/', {replaceUrl: true });
   }
 
-  async updateUserInfo() {
-    // console.log('click update user');
+  async updateUserName() {
     const alert = await this.alertCtrl.create({
       header: 'Modifica username per "' + this.user.email + '"',
       buttons: [
@@ -52,7 +44,7 @@ export class HomePage implements OnInit {
         {
           text: 'Modifica',
           handler: (res) => {
-            this.auth.updateUserInfo(
+            this.auth.updateUserName(
               {
                 displayName: res.displayName
               }
@@ -88,8 +80,9 @@ export class HomePage implements OnInit {
               source: CameraSource.Camera
             });
             if (photo) {
-              const photoUrl = await this.data.uploadImageForUser(photo, true);
-              // const photoUrl = this.data.uploadUserPh(photo, true);
+              const response = await fetch(photo.webPath);
+              const blob = await response.blob();
+              await this.data.uploadImageForUser(blob, true);
             }
         }
       }
