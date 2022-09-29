@@ -44,20 +44,13 @@ export class LoginPage implements OnInit {
     const user = user$.subscribe(
       (userCurr) => {
         loading.dismiss();
-        console.log(userCurr);
-        if (userCurr) {
+        if (userCurr && userCurr.user) {
           this.router.navigateByUrl(`/home`,{replaceUrl: true});
         } else {
           alert('Login error');
         }
       }
     );
-    // await loading.dismiss();
-    // if (user) {
-    //   this.router.navigateByUrl(`/home`,{replaceUrl: true});
-    // } else {
-    //   alert('Login error');
-    // }
   }
 
 }

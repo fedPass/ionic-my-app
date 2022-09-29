@@ -9,23 +9,18 @@ import {
 })
 export class AuthFireService {
 
+  userData: any; //dove salvo dati user
   constructor(
     private auth: Auth
-  ) { }
+  ) {
+    if (this.auth.currentUser)
+    {
+      this.userData = this.auth.currentUser;
+    }
+    // console.log('user data in authFire',this.userData);
+   }
 
   async register({email, password, username, avatarUrl}) {
-    // createUserWithEmailAndPassword(this.auth, email, password)
-    // .then((userCredential) => {
-    //   // Signed in
-    //   const user = userCredential.user;
-    //   return user;
-    // })
-    // .catch((error) => {
-    //   const errorCode = error.code;
-    //   const errorMessage = error.message;
-    //   console.log('ERROR:',errorMessage);
-    //   return null;
-    // });
     try {
       const user = await createUserWithEmailAndPassword(this.auth, email, password);
       updateProfile(user.user,
@@ -36,6 +31,7 @@ export class AuthFireService {
       );
       return user;
     } catch (error) {
+      console.log('ERROR:',error.message);
       return null;
     }
   }
@@ -54,16 +50,20 @@ export class AuthFireService {
     onAuthStateChanged(this.auth, (user) => {
       if (user) {
         console.log('User auth',user);
+        localStorage.setItem('user', JSON.stringify(this.userData));
+        JSON.parse(localStorage.getItem('user'));
         return user;
       } else {
         // User is signed out
         console.log('User NOT auth');
+        localStorage.setItem('user', 'null');
+        JSON.parse(localStorage.getItem('user'));
         return null;
       }
     });
   }
 
-  logout() {
+  async logout() {
     return signOut(this.auth);
   }
 
@@ -81,4 +81,12 @@ export class AuthFireService {
   }
 
 
+}
+
+export interface User {
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL: string;
+  emailVerified: boolean;
 }

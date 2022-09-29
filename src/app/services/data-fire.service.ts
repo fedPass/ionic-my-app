@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Firestore, addDoc, updateDoc, deleteDoc, collection, collectionData, doc } from '@angular/fire/firestore';
-import { getDownloadURL, ref, uploadBytes, uploadBytesResumable, uploadString } from '@angular/fire/storage';
+import { getDownloadURL, ref, uploadBytesResumable } from '@angular/fire/storage';
 import { Geolocation } from '@capacitor/geolocation';
 import { Observable } from 'rxjs';
 
 import { Storage } from '@angular/fire/storage';
 import { Auth } from '@angular/fire/auth';
+
+import { AngularFireStorage } from '@angular/fire/compat/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +19,8 @@ export class DataFireService {
   constructor(
     private firestore: Firestore,
     private authFirebase: Auth,
-    private storage: Storage
+    private storage: Storage,
+    private fireStorage: AngularFireStorage
 
     ) { }
 
@@ -88,6 +91,7 @@ export class DataFireService {
     //creare referenza per il percorso dell'immagine
     const storageRef = ref(this.storage, path);
 
+    // #TODO: check quale formato inviare
     const uploadTask = uploadBytesResumable(storageRef, cameraFile, metadata);
 
     // Listen for state changes, errors, and completion of the upload.
@@ -119,22 +123,21 @@ export class DataFireService {
     }
     );
 
-    // const uploadTask = uploadBytes(storageRef, cameraFile, metadata )
-    // .then((snapshot) => {
-    //   console.log('Uploaded a blob or file!', snapshot);
-    //   // const imageUrl = getDownloadURL(snapshot.ref)
-    //   // .then((downloadUrl) => {
-    //   //   const imageUrlString = downloadUrl;
-    //   //   console.log('downloadUrl',downloadUrl);
-    //   //   return imageUrlString;
-    //   // });
-    // })
-    // .catch(error => {
-    //   console.log(error);
-    //   return null;
-    // });
-
   }
+
+  // uploadUserPh(cameraFile, avatar = false) {
+  //   const user = this.authFirebase.currentUser;
+  //   const imgFormat = cameraFile.format;
+  //   let path = '';
+  //   if (avatar) {
+  //     path = `uploads/${user.uid}/profileImage`;
+  //   } else {
+  //     path = `uploads/${user.uid}/`+ new Date().getTime() + '.' + imgFormat;
+  //   }
+  //   const filePath = 'name-your-file-path-here';
+  //   const refStor = this.fireStorage.ref(filePath);
+  //   const task = refStor.put(cameraFile);
+  // }
 
   async getUserProfilePhotoUrl() {
     const user = this.authFirebase.currentUser;

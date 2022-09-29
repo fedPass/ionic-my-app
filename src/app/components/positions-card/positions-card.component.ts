@@ -20,7 +20,8 @@ export class PositionsCardComponent implements OnInit {
     private alertCtrl: AlertController,
     public platform: Platform
   ) {
-    this.user = this.auth.getUserProfile();
+    // this.user = this.auth.getUserProfile();
+    this.user = this.auth.userData;
 
     this.dataFire.getUserPositions(this.user)
     .subscribe( (res)  => {

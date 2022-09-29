@@ -4,20 +4,24 @@ import { RouteReuseStrategy } from '@angular/router';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
+import { environment } from 'src/environments/environment';
+import { ComponentsModule } from './components/components.module';
+
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
+import { AngularFireModule} from '@angular/fire/compat';
 import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
-import { environment } from 'src/environments/environment';
-
 import { provideAuth, getAuth } from '@angular/fire/auth';
-
-import { AngularFireModule} from '@angular/fire/compat';
-import { ComponentsModule } from './components/components.module';
-
-// import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { provideStorage, getStorage } from '@angular/fire/storage';
+
+// Firebase services - importando i moduli così non va
+// import { AngularFireModule } from '@angular/fire/compat';
+// import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+// import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { AuthFireService } from './services/auth-fire.service';
+// import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 
 @NgModule({
   declarations: [
@@ -27,16 +31,23 @@ import { provideStorage, getStorage } from '@angular/fire/storage';
     BrowserModule,
     IonicModule.forRoot(),
     AppRoutingModule,
-    AngularFireModule.initializeApp(environment.firebase), //trick per evitare error in console
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    ComponentsModule,
+
+    AngularFireModule.initializeApp(environment.firebase),
+    provideFirebaseApp(() => initializeApp(environment.firebase)), //trick per evitare error
     provideFirestore(() => getFirestore()),
     provideAuth(()=>getAuth()),
+    provideStorage(() => getStorage())
+    // AngularFireAuthModule,
+    // AngularFirestoreModule,
     // AngularFireStorageModule,
-    provideStorage(() => getStorage()),
-    ComponentsModule
 
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  //disponibili per tutta l'app
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    // AuthFireService
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

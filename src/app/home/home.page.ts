@@ -22,7 +22,8 @@ export class HomePage implements OnInit {
     private alertCtrl: AlertController,
     private data: DataFireService
   ) {
-    this.user = this.auth.getUserProfile();
+    // this.user = this.auth.getUserProfile();
+    this.user = this.auth.userData;
     this.data.getUserProfilePhotoUrl().then(
       (url) => {
         this.userAvatarUrl = url;
@@ -88,8 +89,7 @@ export class HomePage implements OnInit {
             });
             if (photo) {
               const photoUrl = await this.data.uploadImageForUser(photo, true);
-              console.log('photourl',photoUrl);
-              this.userAvatarUrl = photoUrl;
+              // const photoUrl = this.data.uploadUserPh(photo, true);
             }
         }
       }
