@@ -38,12 +38,13 @@ export class PositionsCardComponent implements OnInit {
     const alert = await this.alertCtrl.create({
       header: 'Inserisci un nuovo luogo visitato',
       buttons: [
+        //#TODO: come inserire foto? btn che richiama getPhoto()?
         {
           text: 'Chiudi',
           role: 'cancel'
         },
         {
-          text: 'Aggiugni',
+          text: 'Aggiungi',
           handler: (res) => {
             this.dataFire.addPosition(
               {
@@ -58,14 +59,7 @@ export class PositionsCardComponent implements OnInit {
         {
           name: 'name',
           placeholder: 'Name',
-        },
-        //#TODO: come inserire foto? btn che richiama getPhoto()?
-        // UPLOAD FILE: https://firebase.google.com/docs/storage/web/upload-files
-        // {
-        //   name: 'photo',
-        //   placeholder: 'photo',
-        //   type: 'url'
-        // }
+        }
       ],
     });
     alert.present();

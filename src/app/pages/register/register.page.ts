@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { from } from 'rxjs';
 import { AuthFireService } from 'src/app/services/auth-fire.service';
+import { CameraService } from 'src/app/services/camera.service';
 
 @Component({
   selector: 'app-register',
@@ -12,12 +13,15 @@ import { AuthFireService } from 'src/app/services/auth-fire.service';
 })
 export class RegisterPage implements OnInit {
   credentials: FormGroup;
+  userPhoto: Blob;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthFireService,
     private loading: LoadingController,
-    private router: Router
+    private router: Router,
+    private cameraService: CameraService,
+    private alertController: AlertController
   ) { }
 
   get email() {
@@ -51,6 +55,24 @@ export class RegisterPage implements OnInit {
           alert('Register error');
           return null;
         }
+      }
+    );
+  }
+
+  async getPhoto(){
+    await this.cameraService.getPhotoByCamera().then(
+      async (blob) => {
+        this.userPhoto = blob;
+        const alert = await this.alertController.create({
+          header: 'Avviso',
+          message: 'Foto acquisita correttamente!',
+          buttons: ['OK'],
+        });
+
+        await alert.present();
+        //qui devo salvare prima img e poi renderla disponibile con link
+        //o salvo temporaneamnete, poi ho uid e posso salvare nella sua cartella e poi cancello file temporaneo
+        this.credentials.value.avatarImg = blob;
       }
     );
   }

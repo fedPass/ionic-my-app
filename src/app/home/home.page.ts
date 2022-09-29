@@ -6,6 +6,7 @@ import { AlertController } from '@ionic/angular';
 
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { DataFireService } from '../services/data-fire.service';
+import { CameraService } from '../services/camera.service';
 
 @Component({
   selector: 'app-home',
@@ -19,7 +20,8 @@ export class HomePage implements OnInit {
     private auth: AuthFireService,
     private router: Router,
     private alertCtrl: AlertController,
-    private data: DataFireService
+    private data: DataFireService,
+    private cameraService: CameraService
   ) {
     //TODO dovrebbe essere un observable di user? forse si!
     this.user = this.auth.getUserProfile();
@@ -64,7 +66,7 @@ export class HomePage implements OnInit {
 
   async updateUserPhoto() {
     const alert = await this.alertCtrl.create({
-      header: 'Cambia foto profilo',
+      header: 'Foto profilo',
       buttons: [
         {
           text: 'Chiudi',
@@ -73,17 +75,11 @@ export class HomePage implements OnInit {
         {
           text: 'Carica/Scatta',
           handler: async () => {
-            const photo = await Camera.getPhoto({
-              quality: 90,
-              allowEditing: true,
-              resultType: CameraResultType.Uri,
-              source: CameraSource.Camera
-            });
-            if (photo) {
-              const response = await fetch(photo.webPath);
-              const blob = await response.blob();
-              await this.data.uploadImageForUser(blob, true);
-            }
+            await this.cameraService.getPhotoByCamera().then(
+              async (blob) => {
+                await this.data.uploadImageForUser(blob, true);
+              }
+            );
         }
       }
     ]

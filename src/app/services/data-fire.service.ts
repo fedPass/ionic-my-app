@@ -69,9 +69,9 @@ export class DataFireService {
     return nowISOString;
   }
 
-  async uploadImageForUser(cameraFile, avatar = false) {
+  async uploadImageForUser(blob, avatar = false) {
     const user = this.authFirebase.currentUser;
-    const imgFormat = cameraFile.format;
+    const imgFormat = blob.type;
     let path = '';
     if (avatar) {
       path = `uploads/${user.uid}/profileImage`;
@@ -80,14 +80,13 @@ export class DataFireService {
     }
 
     const metadata = {
-      contentType: `image/${imgFormat}`,
+      contentType: imgFormat,
     };
 
     //creare referenza per il percorso dell'immagine
     const storageRef = ref(this.storage, path);
 
-    // #TODO: check quale formato inviare
-    const uploadTask = uploadBytesResumable(storageRef, cameraFile, metadata);
+    const uploadTask = uploadBytesResumable(storageRef, blob, metadata);
 
     // Listen for state changes, errors, and completion of the upload.
     uploadTask.on('state_changed',
@@ -126,11 +125,6 @@ export class DataFireService {
 
   }
 
-  async getUserProfilePhotoUrl() {
-    const user = this.authFirebase.currentUser;
-    const storeRef = ref(this.storage, `uploads/${user.uid}/profileImage`);
-    return await getDownloadURL(storeRef);
-  }
 }
 
 export interface Position {
