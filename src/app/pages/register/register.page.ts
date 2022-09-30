@@ -47,7 +47,7 @@ export class RegisterPage implements OnInit {
     const user = this.authService.register(this.credentials.value,this.userPhoto).then(
       (newUser) => {
         loading.dismiss();
-        console.log('newUser', newUser);
+        // console.log('newUser', newUser);
         if (newUser) {
           this.router.navigateByUrl(`/home`,{replaceUrl: true});
           return newUser;

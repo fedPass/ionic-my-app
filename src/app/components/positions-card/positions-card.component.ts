@@ -40,20 +40,20 @@ export class PositionsCardComponent implements OnInit {
       buttons: [
         //#TODO: come inserire foto? btn che richiama getPhoto()?
         {
-          text: 'Chiudi',
-          role: 'cancel'
-        },
-        {
           text: 'Aggiungi',
           handler: (res) => {
             this.dataFire.addPosition(
               {
-              name: res.name,
+                name: res.name,
               },
               this.user
-            );
-          }
-        }
+              );
+            }
+          },
+          {
+            text: 'Chiudi',
+            role: 'cancel'
+          },
     ],
       inputs: [
         {

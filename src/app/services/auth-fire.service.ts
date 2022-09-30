@@ -19,17 +19,16 @@ export class AuthFireService {
    }
 
   async register({email, password, username},avatarBlob) {
-    console.log(email, password, username,avatarBlob);
     try {
       const user = await createUserWithEmailAndPassword(this.auth, email, password);
       //qui salvo foto così prendo link corretto
-      console.log('user in register',user);
+      // console.log('user in register',user);
       const avatarFineUrl = await this.datafire.uploadImageForUser(avatarBlob, true);
-      console.log('avatar url in register',avatarFineUrl);
+      // console.log('avatar url in register',avatarFineUrl);
       await updateProfile(user.user, { displayName: username });
       return user;
     } catch (error) {
-      console.log('ERROR:',error.message);
+      console.error('ERROR:',error.message);
       return null;
     }
   }

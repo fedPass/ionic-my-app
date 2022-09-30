@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 
 import { Storage } from '@angular/fire/storage';
 import { Auth, updateProfile } from '@angular/fire/auth';
+import { CameraService } from './camera.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ export class DataFireService {
     private firestore: Firestore,
     private authFirebase: Auth,
     private storage: Storage,
+    private cameraService: CameraService
 
     ) { }
 
@@ -33,9 +35,14 @@ export class DataFireService {
       const docRef = await addDoc(collection(this.firestore, `users/${user.uid}/positions`), {
         name: position.name,
         coords: position.coords,
-        created: this.getNowISOString()
+        created: this.getNowISOString(),
+        photoUrl: null
       });
-      console.log('Document written with ID: ', docRef.id);
+      await this.cameraService.getPhotoByCamera()
+      .then( async (blob) => {
+          const imgUrl = await this.uploadImageForUser(blob, false, position.name.replace(' ','_'),docRef);
+      });
+      console.log('Document written with ID: ', docRef);
     } catch (e) {
       console.error('Error adding document: ', e);
     }
@@ -52,6 +59,7 @@ export class DataFireService {
 
   deletePosition(position,user) {
     deleteDoc(doc(this.firestore, `users/${user.uid}/positions/${position.id}`));
+    //devo cancellare anche la foto in storage
   }
 
   updateNamePosition(position,user) {
@@ -69,16 +77,19 @@ export class DataFireService {
     return nowISOString;
   }
 
-  async uploadImageForUser(blob, avatar = false) {
-    console.log('blob',blob);
+  async uploadImageForUser(blob, avatar = false, name = null,docRef = null) {
+    //per le foto posizione il name sarà l'id della posizione
     const user = this.authFirebase.currentUser;
     const imgFormat = blob.type.substr(blob.type.lastIndexOf('/') + 1);
-    console.log(imgFormat);
     let path = '';
     if (avatar) {
       path = `uploads/${user.uid}/profileImage`;
     } else {
-      path = `uploads/${user.uid}/`+ new Date().getTime() + '.' + imgFormat;
+      if (name) {
+        path = `uploads/${user.uid}/`+ name + '.' + imgFormat;
+      } else {
+        path = `uploads/${user.uid}/`+ new Date().getTime() + '.' + imgFormat;
+      }
     }
 
     const metadata = {
@@ -113,15 +124,18 @@ export class DataFireService {
     () => {
       // Upload completed successfully, now we can get the download URL
       getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-        console.log('File available at', downloadURL);
         if (avatar) {
-          console.log('enter in if avatar!');
           await updateProfile(user,
             {
               photoURL: downloadURL
             }
-          );
-        }
+            );
+          } else {
+            await updateDoc(doc(this.firestore,`users/${user.uid}/positions/${docRef.id}`), {
+              photoUrl: downloadURL
+            });
+          }
+        console.log('File available at', downloadURL);
         return downloadURL;
       });
     }

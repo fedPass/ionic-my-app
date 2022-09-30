@@ -11,8 +11,14 @@
     <ion-list *ngIf="positionsList.length !== 0; else noPositionsList">
 
       <ion-item *ngFor="let position of positionsList">
+        <!-- {{positionsList | json }} -->
 
-        <ion-icon name="pin"></ion-icon>
+        <ion-avatar *ngIf="position.photoUrl, else iconPin">
+          <img [src]="position.photoUrl">
+        </ion-avatar>
+        <ng-template #iconPin>
+          <ion-icon name="pin"></ion-icon>
+        </ng-template>
         <ion-label  class="ion-margin-start">
           <h2>{{position.name}}</h2>
           <p style="font-style: italic;">Lat: {{position.coords.lat}} - Lon: {{position.coords.lon}}</p>
