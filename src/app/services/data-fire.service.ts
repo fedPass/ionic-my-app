@@ -72,7 +72,8 @@ export class DataFireService {
   async uploadImageForUser(blob, avatar = false) {
     console.log('blob',blob);
     const user = this.authFirebase.currentUser;
-    const imgFormat = blob.type;
+    const imgFormat = blob.type.substr(blob.type.lastIndexOf('/') + 1);
+    console.log(imgFormat);
     let path = '';
     if (avatar) {
       path = `uploads/${user.uid}/profileImage`;
