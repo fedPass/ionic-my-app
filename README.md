@@ -292,7 +292,7 @@ importare nel ngModule il fireStorageModule
 
 ```bash
 
-import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { provideStorage, getStorage } from '@angular/fire/storage';
 
 @NgModule({
   imports: [
@@ -306,8 +306,7 @@ nel componente
 ```bash
 
   import { AngularFireStorage } from '@angular/fire/compat/storage';
-
-  constructor(private storage: AngularFireStorage) { 
+  constructor(private storage: Storage) { 
 
       uploadFile(event) {
       const file = event.target.files[0];
@@ -317,47 +316,30 @@ nel componente
 
     or 
 
-    const storageRef = ref(storage, 'some-child');
-
-    // 'file' comes from the Blob or File API
-    uploadBytes(storageRef, file).then((snapshot) => {
-      console.log('Uploaded a blob or file!');
-    });
-
+    const storageRef = ref(this.storage, path);
+    const uploadTask = uploadBytesResumable(storageRef, blob, metadata);
 
 ```
 
 ## At the end
-Add the platform:
+Stoppare ionic serve, fare l abuild e aggiungere i due progetti per rispettivi devices
 
 ```bash
-  # iOS
-ionic cordova platform add ios
-
-# Android
-ionic cordova platform add android 
+  ionic build
+  ionic cap add android
+  ionic cap add ios
+  ionic cap copy
+  ionic cap sync
 
 ```
 
-Next, create the runnable build:
+Aprire Andriod Studio e settare permessi necessari nel AndroidManifest.xml
 
 ```bash
-# iOS
-ionic cordova build ios
-
-# Android
-ionic cordova build android
+ionic cap open android
 
 ```
 
-Finally, start the app on the device:
-
-```bash
-# iOS
-ionic cordova run ios -l
-
-# Android
-ionic cordova run android -l
-
-```
+Click the "Run" button, select the attached Android device, 
+then click OK to build, install, and launch the app on your device.
 
