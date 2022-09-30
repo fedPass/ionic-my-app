@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Firestore, addDoc, updateDoc, deleteDoc, collection, collectionData, doc } from '@angular/fire/firestore';
-import { getDownloadURL, ref, uploadBytesResumable } from '@angular/fire/storage';
+import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from '@angular/fire/storage';
 import { Geolocation } from '@capacitor/geolocation';
 import { Observable } from 'rxjs';
 
@@ -40,9 +40,10 @@ export class DataFireService {
       });
       await this.cameraService.getPhotoByCamera()
       .then( async (blob) => {
-          const imgUrl = await this.uploadImageForUser(blob, false, position.name.replace(' ','_'),docRef);
+          // const imgUrl = await this.uploadImageForUser(blob, false, position.name.replace(' ','_'),docRef);
+          const imgUrl = await this.uploadImageForUser(blob, false, docRef);
       });
-      console.log('Document written with ID: ', docRef);
+      // console.log('Document written with ID: ', docRef);
     } catch (e) {
       console.error('Error adding document: ', e);
     }
@@ -59,7 +60,7 @@ export class DataFireService {
 
   deletePosition(position,user) {
     deleteDoc(doc(this.firestore, `users/${user.uid}/positions/${position.id}`));
-    //devo cancellare anche la foto in storage
+    deleteObject(ref(this.storage, `uploads/${user.uid}/${position.id}`));
   }
 
   updateNamePosition(position,user) {
@@ -77,30 +78,23 @@ export class DataFireService {
     return nowISOString;
   }
 
-  async uploadImageForUser(blob, avatar = false, name = null,docRef = null) {
+  async uploadImageForUser(blob, avatar = false, docRef = null) {
     //per le foto posizione il name sarà l'id della posizione
     const user = this.authFirebase.currentUser;
-    const imgFormat = blob.type.substr(blob.type.lastIndexOf('/') + 1);
     let path = '';
     if (avatar) {
       path = `uploads/${user.uid}/profileImage`;
     } else {
-      if (name) {
-        path = `uploads/${user.uid}/`+ name + '.' + imgFormat;
-      } else {
-        path = `uploads/${user.uid}/`+ new Date().getTime() + '.' + imgFormat;
-      }
+      path = `uploads/${user.uid}/`+ docRef.id;
     }
 
     const metadata = {
-      contentType: imgFormat,
+      contentType: blob.format
     };
 
     //creare referenza per il percorso dell'immagine
     const storageRef = ref(this.storage, path);
-
     const uploadTask = uploadBytesResumable(storageRef, blob, metadata);
-
     // Listen for state changes, errors, and completion of the upload.
     uploadTask.on('state_changed',
     (snapshot) => {},
