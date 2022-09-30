@@ -3,6 +3,7 @@ import {
   Auth, createUserWithEmailAndPassword,
   onAuthStateChanged, signInWithEmailAndPassword,
   signOut, updateProfile } from '@angular/fire/auth';
+import { DataFireService } from './data-fire.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,20 +12,21 @@ export class AuthFireService {
 
   userData: any; //dove salvo dati user
   constructor(
-    private auth: Auth
+    private auth: Auth,
+    private datafire: DataFireService
   ) {
       this.userData = this.getUserProfile();
    }
 
-  async register({email, password, username, avatarUrl}) {
+  async register({email, password, username},avatarBlob) {
+    console.log(email, password, username,avatarBlob);
     try {
       const user = await createUserWithEmailAndPassword(this.auth, email, password);
-      await updateProfile(user.user,
-        {
-          displayName: username,
-          photoURL: avatarUrl
-        }
-      );
+      //qui salvo foto così prendo link corretto
+      console.log('user in register',user);
+      const avatarFineUrl = await this.datafire.uploadImageForUser(avatarBlob, true);
+      console.log('avatar url in register',avatarFineUrl);
+      await updateProfile(user.user, { displayName: username });
       return user;
     } catch (error) {
       console.log('ERROR:',error.message);

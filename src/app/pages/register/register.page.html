@@ -37,32 +37,24 @@
               <ion-label><strong>Immagine del Profile</strong></ion-label>
           </ion-item>
 
-          <ion-row class="ion-justify-content-center ion-padding-vertical">
-
-            <ion-item lines="none">
-              <ion-input type="file" formControlName="avatarImg" #avatarImg></ion-input>
-            </ion-item>
-
-            <ion-item lines="none">
-              <p>oppure scattane una</p>
-              <ion-button color="success" class="ion-margin-start" (click)="getPhoto()">
-                <ion-icon name="camera"></ion-icon>
-              </ion-button>
-            </ion-item>
-
-          </ion-row>
-
-          <ion-item *ngIf="userPhoto">
-            <hr color="success">
-            <p ><strong>Foto acquisita correttamente</strong></p>
+          <ion-item lines="none">
+            <p>Carica un'immagine o scatta una foto</p>
+            <ion-button color="success" class="ion-margin-start" (click)="getPhoto()">
+              <ion-icon name="camera"></ion-icon>
+            </ion-button>
           </ion-item>
+          <ion-row class="ion-justify-content-center ion-padding-vertical">
+            <ion-item *ngIf="userPhoto" lines="none">
+              <p><strong>Foto acquisita correttamente</strong></p>
+            </ion-item>
+          </ion-row>
 
           <ion-button expand="full" type="submit" [disabled]="!credentials.valid" color="success">Registrati</ion-button>
 
         </form>
 
         <div class="ion-padding-top">
-          <p class="already ion-text-center">Already a user?</p>
+          <p class="already ion-text-center">Hai  già un account?</p>
           <ion-button [routerLink]="['/login']" expand="block" color="warning">Login</ion-button>
         </div>
 

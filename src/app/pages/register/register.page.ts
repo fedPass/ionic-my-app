@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
-import { from } from 'rxjs';
 import { AuthFireService } from 'src/app/services/auth-fire.service';
 import { CameraService } from 'src/app/services/camera.service';
 
@@ -13,7 +12,7 @@ import { CameraService } from 'src/app/services/camera.service';
 })
 export class RegisterPage implements OnInit {
   credentials: FormGroup;
-  userPhoto: Blob;
+  userPhoto: Blob | null;
 
   constructor(
     private fb: FormBuilder,
@@ -37,14 +36,15 @@ export class RegisterPage implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       username:[''],
-      avatarImg:['']
+      // avatarImg:['']
     });
   }
 
   async register() {
+    console.log('info new user al click su register', this.credentials.value, this.userPhoto);
     const loading = await this.loading.create();
     await loading.present();
-    const user = this.authService.register(this.credentials.value).then(
+    const user = this.authService.register(this.credentials.value,this.userPhoto).then(
       (newUser) => {
         loading.dismiss();
         console.log('newUser', newUser);
@@ -68,11 +68,7 @@ export class RegisterPage implements OnInit {
           message: 'Foto acquisita correttamente!',
           buttons: ['OK'],
         });
-
         await alert.present();
-        //qui devo salvare prima img e poi renderla disponibile con link
-        //o salvo temporaneamnete, poi ho uid e posso salvare nella sua cartella e poi cancello file temporaneo
-        this.credentials.value.avatarImg = blob;
       }
     );
   }

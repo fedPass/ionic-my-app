@@ -70,6 +70,7 @@ export class DataFireService {
   }
 
   async uploadImageForUser(blob, avatar = false) {
+    console.log('blob',blob);
     const user = this.authFirebase.currentUser;
     const imgFormat = blob.type;
     let path = '';
@@ -112,12 +113,14 @@ export class DataFireService {
       // Upload completed successfully, now we can get the download URL
       getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
         console.log('File available at', downloadURL);
-        await updateProfile(user,
-          {
-            photoURL: downloadURL
-          }
-        );
-        // return user;
+        if (avatar) {
+          console.log('enter in if avatar!');
+          await updateProfile(user,
+            {
+              photoURL: downloadURL
+            }
+          );
+        }
         return downloadURL;
       });
     }
