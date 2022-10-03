@@ -8,50 +8,74 @@
 
   <ion-card-content>
 
-    <ion-list *ngIf="positionsList.length !== 0; else noPositionsList">
-
-      <ion-item *ngFor="let position of positionsList">
-        <!-- {{positionsList | json }} -->
-
-        <ion-avatar *ngIf="position.photoUrl, else iconPin">
-          <img [src]="position.photoUrl">
-        </ion-avatar>
-        <ng-template #iconPin>
-          <ion-icon name="pin"></ion-icon>
-        </ng-template>
-        <ion-label  class="ion-margin-start">
-          <h2>{{position.name}}</h2>
-          <p style="font-style: italic;">Lat: {{position.coords.lat}} - Lon: {{position.coords.lon}}</p>
-          <p *ngIf="position.created" style="font-style: italic;">{{position.created | date :'EEE d MMMM y, h:mm':'it-IT' }}</p>
-        </ion-label>
-
-        <ion-button color="success" (click)="updatePosition(position)">
-          <ion-icon name="build"></ion-icon>
-        </ion-button>
-
-        <ion-button color="danger" (click)="deletePosition(position)">
-          <ion-icon name="trash"></ion-icon>
-        </ion-button>
-
-      </ion-item>
-    </ion-list>
-
-    <ng-template #noPositionsList>
-      <p>Non hai ancora inserito luoghi visitati</p>
-    </ng-template>
-
     <ion-button expand="full" color="success" (click)="addNewPosition()" >
       <ion-icon name="add" class="ion-padding-end"></ion-icon>
       Aggiungi nuovo luogo
     </ion-button>
 
-    <!-- <ion-button expand="full" color="warning" [routerLink]="['/my-map']" -->
-    <ion-button *ngIf="!isMapPage"
-      expand="full" color="warning" href='/my-map'
-      class="ion-margin-top">
-      <ion-icon name="map" class="ion-padding-end"></ion-icon>
-      Visualizza la tua mappa
-    </ion-button>
+    <ng-container *ngIf="positionsList$ | async as positionsList; else loadingPositionsList">
+
+      <ion-button *ngIf="!isMapPage"
+        expand="full" color="warning" href='/my-map'
+        class="ion-margin-top">
+        <ion-icon name="map" class="ion-padding-end"></ion-icon>
+        Visualizza la tua mappa
+      </ion-button>
+
+      <ion-list *ngIf="positionsList.length > 0; else noPositionsList">
+
+        <ion-item *ngFor="let position of positionsList">
+
+          <ion-avatar *ngIf="position.photoUrl, else iconPin">
+            <img [src]="position.photoUrl">
+          </ion-avatar>
+          <ng-template #iconPin>
+            <ion-icon name="pin"></ion-icon>
+          </ng-template>
+          <ion-label  class="ion-margin-start">
+            <h2>{{position.name}}</h2>
+            <p style="font-style: italic;">Lat: {{position.coords.lat}} - Lon: {{position.coords.lon}}</p>
+            <p *ngIf="position.created" style="font-style: italic;">
+              <!-- #TODO: correggere formato date in IT (import locale in component?) -->
+              {{position.created | date :'EEE d MMMM y, h:mm' : 'it-IT' }}
+            </p>
+          </ion-label>
+
+          <ion-button color="success" (click)="updatePosition(position)">
+            <ion-icon name="build"></ion-icon>
+          </ion-button>
+
+          <ion-button color="danger" (click)="deletePosition(position)">
+            <ion-icon name="trash"></ion-icon>
+          </ion-button>
+
+        </ion-item>
+      </ion-list>
+
+      <ng-template #noPositionsList>
+        <p class="ion-padding-top ion-text-center">Non hai ancora inserito luoghi visitati</p>
+      </ng-template>
+
+    </ng-container>
+
+    <ng-template #loadingPositionsList>
+      <ion-card class="skeleton-card" *ngFor="let i of [1, 2, 3]">
+        <ion-card-content>
+          <ion-grid>
+            <ion-row class="ion-text-center">
+              <ion-col>
+                <ion-skeleton-text animated></ion-skeleton-text>
+              </ion-col>
+            </ion-row>
+            <ion-row class="ion-text-center">
+              <ion-col>
+                <ion-skeleton-text animated></ion-skeleton-text>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-content>
+      </ion-card>
+    </ng-template>
 
   </ion-card-content>
 </ion-card>

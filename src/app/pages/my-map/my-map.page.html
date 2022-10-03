@@ -9,8 +9,8 @@
 
 <ion-content>
 
-  <ion-title *ngIf="positionsList.length > 0" class="ion-padding">
-    Hai visitato {{positionsList.length}} posto/i
+  <ion-title *ngIf="positionsList$ | async as positionsList" class="ion-padding">
+    Hai visitato {{ positionsList.length }} posto/i
   </ion-title>
 
   <div id="map" class="map"></div>

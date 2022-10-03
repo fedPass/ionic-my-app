@@ -7,13 +7,15 @@ import { Observable } from 'rxjs';
 import { Storage } from '@angular/fire/storage';
 import { Auth, updateProfile } from '@angular/fire/auth';
 import { CameraService } from './camera.service';
+import { User } from './auth-fire.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataFireService {
 
-  userPositions = [];
+  userPositions$: Observable<Position[]>;
+  user: User;
 
   constructor(
     private firestore: Firestore,
@@ -21,7 +23,10 @@ export class DataFireService {
     private storage: Storage,
     private cameraService: CameraService
 
-    ) { }
+    ) {
+      this.user = this.authFirebase.currentUser;
+      this.userPositions$ = this.getUserPositions(this.user);
+     }
 
   async addPosition(position,user) {
     const coords = await Geolocation.getCurrentPosition();
@@ -51,11 +56,12 @@ export class DataFireService {
 
   getUserPositions(user) {
     // collectionData returns a stream of documents
-    const userPosit = collectionData(
-      collection(this.firestore, `users/${user.uid}/positions`),{idField: 'id'}
+    return collectionData(
+      //query
+      collection(this.firestore, `users/${user.uid}/positions`),
+      //options
+      {idField: 'id'}
     ) as Observable<Position[]>;
-    // console.log(userPosit.subscribe(console.log));
-    return userPosit;
   }
 
   deletePosition(position,user) {
@@ -142,6 +148,8 @@ export class DataFireService {
 export interface Position {
   name: string;
   coords: Coords;
+  photoUrl?: string;
+  created?: string;
 }
 
 export interface Coords {

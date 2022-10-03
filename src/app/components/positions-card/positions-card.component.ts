@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { AuthFireService, User } from 'src/app/services/auth-fire.service';
-import { DataFireService } from 'src/app/services/data-fire.service';
+import { DataFireService, Position } from 'src/app/services/data-fire.service';
 import { Platform } from '@ionic/angular';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-positions-card',
@@ -11,8 +12,8 @@ import { Platform } from '@ionic/angular';
 })
 export class PositionsCardComponent implements OnInit {
   user: User;
-  positionsList = [];
   isMapPage = false;
+  positionsList$: Observable<Position[]>;
 
   constructor(
     private auth: AuthFireService,
@@ -21,14 +22,10 @@ export class PositionsCardComponent implements OnInit {
     public platform: Platform
   ) {
     this.user = this.auth.getUserProfile();
-
-    this.dataFire.getUserPositions(this.user)
-    .subscribe( (res)  => {
-      this.positionsList = res;
-    });
-
-    const currentUrl = this.platform.url();
-    const pageUrl = currentUrl.substr(currentUrl.lastIndexOf('/') + 1);
+    //se uso questo quando cambio user non si aggiornano le positions in home
+    // this.positionsList$ = this.dataFire.userPositions$;
+    this.positionsList$ = this.dataFire.getUserPositions(this.user);
+    const pageUrl = this.platform.url().substr(this.platform.url().lastIndexOf('/') + 1);
     this.isMapPage = pageUrl === 'my-map' ? true : false;
   }
 
@@ -38,7 +35,6 @@ export class PositionsCardComponent implements OnInit {
     const alert = await this.alertCtrl.create({
       header: 'Inserisci un nuovo luogo visitato',
       buttons: [
-        //#TODO: come inserire foto? btn che richiama getPhoto()?
         {
           text: 'Aggiungi',
           handler: (res) => {
