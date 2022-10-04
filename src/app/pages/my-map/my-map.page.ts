@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import * as Leaflet from 'leaflet';
 import { Geolocation } from '@capacitor/geolocation';
 import { DataFireService, Position } from 'src/app/services/data-fire.service';
-import { Observable, } from 'rxjs';
+import { Observable, Subscription, } from 'rxjs';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {NGXLogger} from 'ngx-logger';
 
@@ -13,10 +13,12 @@ const LOG_PREFIX = '[My-map-page] ';
   templateUrl: './my-map.page.html',
   styleUrls: ['./my-map.page.scss'],
 })
-export class MyMapPage implements OnInit, AfterViewInit {
+export class MyMapPage implements OnInit, AfterViewInit, OnDestroy {
   map: Leaflet.Map;
   positionsList$: Observable<Position[]>;
   currentCoords$: Observable<any>;
+  currentCoordsSubscription: Subscription;
+  positionsListSubscription: Subscription;
 
   constructor(
     private dataFire: DataFireService,
@@ -28,7 +30,7 @@ export class MyMapPage implements OnInit, AfterViewInit {
 
   async ngOnInit() {
     // create map with current coords
-    this.currentCoords$.subscribe(
+    this.currentCoordsSubscription = this.currentCoords$.subscribe(
       (resPosition) => {
         this.logger.debug(LOG_PREFIX + 'current coords ', resPosition.coords);
         this.map = new Leaflet.Map('map').setView([+resPosition.coords.latitude, +resPosition.coords.longitude], 10);
@@ -49,7 +51,7 @@ export class MyMapPage implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     //add marker of positions on map
-    this.positionsList$.subscribe(
+    this.positionsListSubscription = this.positionsList$.subscribe(
       (res)  => {
         if (res.length > 0) {
           setTimeout(() => {
@@ -66,5 +68,15 @@ export class MyMapPage implements OnInit, AfterViewInit {
   }
 
   // #TODO: se sono in hover sulla posizione nella lista attiva marker sulla mappa
+
+  ngOnDestroy(): void {
+    if (this.currentCoordsSubscription) {
+      this.currentCoordsSubscription.unsubscribe();
+    }
+    if (this.positionsListSubscription) {
+      this.positionsListSubscription.unsubscribe();
+    }
+
+  }
 
 }
