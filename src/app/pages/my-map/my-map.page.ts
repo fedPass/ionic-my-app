@@ -63,15 +63,15 @@ export class MyMapPage implements OnInit, AfterViewInit, OnDestroy {
         if (res.length > 0) {
           setTimeout(() => {
             res.forEach( (position, i) => {
+              const marker = Leaflet.marker([+position.coords.lat, +position.coords.lon], {
+                title: position.name
+              }).addTo(this.map);
+              marker.bindPopup(`<b>${position.name}</b><br>`);
               if (isPlatform('mobile')) {
               this.logger.debug(LOG_PREFIX + ' position n. ' + (i+1), position.name);
               } else {
               this.logger.debug(LOG_PREFIX + ' position n. ' + (i+1), position);
               }
-              const marker = Leaflet.marker([+position.coords.lat, +position.coords.lon], {
-                title: position.name
-              }).addTo(this.map);
-              marker.bindPopup(`<b>${position.name}</b><br>`);
             });
           }, 300);
         }
