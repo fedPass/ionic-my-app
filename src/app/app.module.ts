@@ -23,6 +23,8 @@ import { provideStorage, getStorage } from '@angular/fire/storage';
 import { AuthFireService } from './services/auth-fire.service';
 // import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 
+import {LoggerModule, NgxLoggerLevel} from 'ngx-logger';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,11 +39,13 @@ import { AuthFireService } from './services/auth-fire.service';
     provideFirebaseApp(() => initializeApp(environment.firebase)), //trick per evitare error
     provideFirestore(() => getFirestore()),
     provideAuth(()=>getAuth()),
-    provideStorage(() => getStorage())
+    provideStorage(() => getStorage()),
     // AngularFireAuthModule,
     // AngularFirestoreModule,
     // AngularFireStorageModule,
-
+    LoggerModule.forRoot({
+      level: NgxLoggerLevel.DEBUG,
+    })
   ],
   //disponibili per tutta l'app
   providers: [

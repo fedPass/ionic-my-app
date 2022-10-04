@@ -33,6 +33,7 @@
     "firebase": "^9.10.0",
     "ionicons": "^6.0.3",
     "leaflet": "^1.9.1",
+    "ngx-logger": "^5.0.11",
     "rxjs": "~6.6.0",
     "tslib": "^2.2.0",
     "zone.js": "~0.11.4"

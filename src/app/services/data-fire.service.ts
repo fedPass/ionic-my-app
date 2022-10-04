@@ -8,6 +8,9 @@ import { Storage } from '@angular/fire/storage';
 import { Auth, updateProfile } from '@angular/fire/auth';
 import { CameraService } from './camera.service';
 import { User } from './auth-fire.service';
+import {NGXLogger} from 'ngx-logger';
+
+const LOG_PREFIX = '[DataFire-Service] ';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +24,8 @@ export class DataFireService {
     private firestore: Firestore,
     private authFirebase: Auth,
     private storage: Storage,
-    private cameraService: CameraService
+    private cameraService: CameraService,
+    private logger: NGXLogger
 
     ) {
       this.user = this.authFirebase.currentUser;
@@ -48,9 +52,9 @@ export class DataFireService {
           // const imgUrl = await this.uploadImageForUser(blob, false, position.name.replace(' ','_'),docRef);
           const imgUrl = await this.uploadImageForUser(blob, false, docRef);
       });
-      // console.log('Document written with ID: ', docRef);
+      this.logger.debug(LOG_PREFIX + 'Document written with ID: ', docRef);
     } catch (e) {
-      console.error('Error adding document: ', e);
+      this.logger.error(LOG_PREFIX + 'Error adding document: ', e);
     }
   }
 
@@ -135,7 +139,7 @@ export class DataFireService {
               photoUrl: downloadURL
             });
           }
-        console.log('File available at', downloadURL);
+        this.logger.debug(LOG_PREFIX + 'File available at', downloadURL);
         return downloadURL;
       });
     }

@@ -4,6 +4,9 @@ import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { AuthFireService } from 'src/app/services/auth-fire.service';
 import { CameraService } from 'src/app/services/camera.service';
+import {NGXLogger} from 'ngx-logger';
+
+const LOG_PREFIX = '[Register-page] ';
 
 @Component({
   selector: 'app-register',
@@ -20,7 +23,8 @@ export class RegisterPage implements OnInit {
     private loading: LoadingController,
     private router: Router,
     private cameraService: CameraService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private logger: NGXLogger
   ) { }
 
   get email() {
@@ -41,17 +45,18 @@ export class RegisterPage implements OnInit {
   }
 
   async register() {
-    console.log('info new user al click su register', this.credentials.value, this.userPhoto);
+    this.logger.debug(LOG_PREFIX + ' user info at register click ', this.credentials.value, this.userPhoto);
     const loading = await this.loading.create();
     await loading.present();
     const user = this.authService.register(this.credentials.value,this.userPhoto).then(
       (newUser) => {
         loading.dismiss();
-        // console.log('newUser', newUser);
+        this.logger.debug(LOG_PREFIX + 'new user info', newUser);
         if (newUser) {
           this.router.navigateByUrl(`/home`,{replaceUrl: true});
           return newUser;
         } else {
+          this.logger.error(LOG_PREFIX + 'Register error');
           alert('Register error');
           return null;
         }

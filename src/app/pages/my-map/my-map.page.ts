@@ -4,6 +4,9 @@ import { Geolocation } from '@capacitor/geolocation';
 import { DataFireService, Position } from 'src/app/services/data-fire.service';
 import { Observable, } from 'rxjs';
 import {fromPromise} from 'rxjs/internal-compatibility';
+import {NGXLogger} from 'ngx-logger';
+
+const LOG_PREFIX = '[My-map-page] ';
 
 @Component({
   selector: 'app-my-map',
@@ -16,7 +19,8 @@ export class MyMapPage implements OnInit, AfterViewInit {
   currentCoords$: Observable<any>;
 
   constructor(
-    private dataFire: DataFireService
+    private dataFire: DataFireService,
+    private logger: NGXLogger
   ) {
     this.positionsList$ = this.dataFire.userPositions$;
     this.currentCoords$ = fromPromise(Geolocation.getCurrentPosition());
@@ -36,30 +40,37 @@ export class MyMapPage implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    //add marker of positions on map
-    this.positionsList$.subscribe(
-      (res)  => {
-      res.forEach( (position, i) => {
-        const marker = Leaflet.marker([+position.coords.lat, +position.coords.lon], {
-          title: position.name
-        }).addTo(this.map);
-        marker.bindPopup(`<b>${position.name}</b><br>`).openPopup();
-
+    setTimeout(() => {
+      //add marker of positions on map
+      this.positionsList$.subscribe(
+        (res)  => {
+          if (res.length > 0) {
+            res.forEach( (position, i) => {
+              this.logger.debug(LOG_PREFIX + ' position n. ' + (i+1), position);
+              const marker = Leaflet.marker([+position.coords.lat, +position.coords.lon], {
+                title: position.name
+              }).addTo(this.map);
+              marker.bindPopup(`<b>${position.name}</b><br>`).openPopup();
+            });
+          }
+        //TODO: mostrare solo se non è tra le posizioni dell'utente
+        //se posizioni coincidono come se sovrascrive quel punto nella mappa
+        // add current position marker
+        this.currentCoords$.subscribe(
+          (resPosition) => {
+            if (resPosition) {
+              this.logger.debug(LOG_PREFIX + 'current coords ', resPosition.coords);
+              const latitude = resPosition.coords.latitude;
+              const longitude = resPosition.coords.longitude;
+              const here = Leaflet.marker([+latitude, +longitude], {
+                title: 'here'
+              }).addTo(this.map);
+              here.bindPopup(`<b>Sei qui!</b><br><small>Lat: ${latitude}<br>Lon: ${longitude}</small>`).openPopup();
+            }
+          }
+        );
       });
-      //TODO: mostrare solo se non è tra le posizioni dell'utente
-      //se posizioni coincidono mostra solo l'ultima (come se sovrascrive quel punto nella mappa)
-      // add current position marker
-      this.currentCoords$.subscribe(
-        (resPosition) => {
-          const latitude = resPosition.coords.latitude;
-          const longitude = resPosition.coords.longitude;
-          const here = Leaflet.marker([+latitude, +longitude], {
-            title: 'here'
-          }).addTo(this.map);
-          here.bindPopup(`<b>Sei qui!</b><br><small>Lat: ${latitude}<br>Lon: ${longitude}</small>`).openPopup();
-        }
-      );
-    });
+    }, 300);
 
   }
 

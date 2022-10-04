@@ -4,6 +4,9 @@ import {
   onAuthStateChanged, signInWithEmailAndPassword,
   signOut, updateProfile } from '@angular/fire/auth';
 import { DataFireService } from './data-fire.service';
+import {NGXLogger} from 'ngx-logger';
+
+const LOG_PREFIX = '[AuthFire-Service] ';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +16,8 @@ export class AuthFireService {
   userData: any; //dove salvo dati user
   constructor(
     private auth: Auth,
-    private datafire: DataFireService
+    private datafire: DataFireService,
+    private logger: NGXLogger
   ) {
       this.userData = this.getUserProfile();
    }
@@ -21,14 +25,11 @@ export class AuthFireService {
   async register({email, password, username},avatarBlob) {
     try {
       const user = await createUserWithEmailAndPassword(this.auth, email, password);
-      //qui salvo foto così prendo link corretto
-      // console.log('user in register',user);
       const avatarFineUrl = await this.datafire.uploadImageForUser(avatarBlob, true);
-      // console.log('avatar url in register',avatarFineUrl);
       await updateProfile(user.user, { displayName: username });
       return user;
     } catch (error) {
-      console.error('ERROR:',error.message);
+      this.logger.error(LOG_PREFIX + ' error ', error.message);
       return null;
     }
   }
