@@ -5,6 +5,7 @@ import { DataFireService, Position } from 'src/app/services/data-fire.service';
 import { Observable, Subscription, } from 'rxjs';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {NGXLogger} from 'ngx-logger';
+import { isPlatform, Platform } from '@ionic/angular';
 
 const LOG_PREFIX = '[My-map-page] ';
 
@@ -22,7 +23,8 @@ export class MyMapPage implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private dataFire: DataFireService,
-    private logger: NGXLogger
+    private logger: NGXLogger,
+    private platform: Platform
   ) {
     this.positionsList$ = this.dataFire.userPositions$;
     this.currentCoords$ = fromPromise(Geolocation.getCurrentPosition());
@@ -32,7 +34,12 @@ export class MyMapPage implements OnInit, AfterViewInit, OnDestroy {
     // create map with current coords
     this.currentCoordsSubscription = this.currentCoords$.subscribe(
       (resPosition) => {
-        this.logger.debug(LOG_PREFIX + 'current coords ', resPosition.coords);
+        if (isPlatform('mobile')) {
+          this.logger.debug(LOG_PREFIX + 'current latitude ', resPosition.coords.latitude);
+          this.logger.debug(LOG_PREFIX + 'current longitude ', resPosition.coords.longitude);
+        } else {
+          this.logger.debug(LOG_PREFIX + 'current longitude ', resPosition.coords);
+        }
         this.map = new Leaflet.Map('map').setView([+resPosition.coords.latitude, +resPosition.coords.longitude], 10);
         Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: 'Map'
@@ -56,7 +63,11 @@ export class MyMapPage implements OnInit, AfterViewInit, OnDestroy {
         if (res.length > 0) {
           setTimeout(() => {
             res.forEach( (position, i) => {
+              if (isPlatform('mobile')) {
+              this.logger.debug(LOG_PREFIX + ' position n. ' + (i+1), position.name);
+              } else {
               this.logger.debug(LOG_PREFIX + ' position n. ' + (i+1), position);
+              }
               const marker = Leaflet.marker([+position.coords.lat, +position.coords.lon], {
                 title: position.name
               }).addTo(this.map);
