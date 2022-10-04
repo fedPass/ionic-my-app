@@ -27,6 +27,7 @@ export class AuthFireService {
       const user = await createUserWithEmailAndPassword(this.auth, email, password);
       const avatarFineUrl = await this.datafire.uploadImageForUser(avatarBlob, true);
       await updateProfile(user.user, { displayName: username });
+      this.userData = user;
       return user;
     } catch (error) {
       this.logger.error(LOG_PREFIX + ' error ', error.message);
@@ -38,6 +39,7 @@ export class AuthFireService {
 
     try {
       const user = await signInWithEmailAndPassword(this.auth, email, password);
+      this.userData = user;
       return user;
     } catch (error) {
       return null;

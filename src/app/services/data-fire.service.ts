@@ -58,6 +58,9 @@ export class DataFireService {
     }
   }
 
+  // #TODO: per aggiornare sia nome che foto positione dovrei fare:
+  //updateNamePosition + prendere img e poi fare uploadImageForUser(blob, avatar = false, docRef)
+
   getUserPositions(user) {
     // collectionData returns a stream of documents
     return collectionData(
@@ -81,9 +84,6 @@ export class DataFireService {
 
   getNowISOString(){
     const date = new Date();
-    const nowUtc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(),
-                date.getUTCDate(), date.getUTCHours(),
-                date.getUTCMinutes(), date.getUTCSeconds());
     const nowISOString = date.toISOString();
     return nowISOString;
   }
