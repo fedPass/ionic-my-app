@@ -48,11 +48,15 @@
                 </ion-row>
                 <ion-row class="ion-justify-content-evenly ion-padding-bottom">
                   <ion-button color="success"
-                    href="whatsapp://send?text=Ciao, voglio condividere questo luogo con te: {{position.name}}, lat. {{position.coords.lat}} - long. {{position.coords.lon}}"
+                    href="whatsapp://send?text=Ciao, voglio condividere questo luogo con te: {{position.name}}, lat. {{position.coords.lat}} - long. {{position.coords.lon}}. Guardala meglio sulla mappa: https://www.google.com/maps/search/?api=1&query={{position.coords.lat}}%2C{{position.coords.lon}}"
                     data-action="share/whatsapp/share"
                   >
                     <ion-icon name="logo-whatsapp"></ion-icon>
                   </ion-button>
+                  <!-- <ion-button color="success"
+                    href="https://www.google.com/maps/search/?api=1&query={{position.coords.lat}}%2C{{position.coords.lon}}">
+                    <ion-icon name="pin"></ion-icon>
+                  </ion-button> -->
                   <ion-button color="success" (click)="updatePosition(position)">
                     <ion-icon name="build"></ion-icon>
                   </ion-button>
