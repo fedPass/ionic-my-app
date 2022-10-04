@@ -30,48 +30,39 @@ export class MyMapPage implements OnInit, AfterViewInit {
     // create map with current coords
     this.currentCoords$.subscribe(
       (resPosition) => {
+        this.logger.debug(LOG_PREFIX + 'current coords ', resPosition.coords);
         this.map = new Leaflet.Map('map').setView([+resPosition.coords.latitude, +resPosition.coords.longitude], 10);
         Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: 'Map'
         }).addTo(this.map);
+        // add current position marker
+        const latitude = resPosition.coords.latitude;
+        const longitude = resPosition.coords.longitude;
+        const here = Leaflet.marker([+latitude, +longitude], {
+          title: 'here'
+        }).addTo(this.map);
+        here.bindPopup(`<b>Sei qui!</b><br><small>Lat: ${latitude}<br>Lon: ${longitude}</small>`).openPopup();
       }
     );
 
   }
 
   ngAfterViewInit() {
-    setTimeout(() => {
-      //add marker of positions on map
-      this.positionsList$.subscribe(
-        (res)  => {
-          if (res.length > 0) {
+    //add marker of positions on map
+    this.positionsList$.subscribe(
+      (res)  => {
+        if (res.length > 0) {
+          setTimeout(() => {
             res.forEach( (position, i) => {
               this.logger.debug(LOG_PREFIX + ' position n. ' + (i+1), position);
               const marker = Leaflet.marker([+position.coords.lat, +position.coords.lon], {
                 title: position.name
               }).addTo(this.map);
-              marker.bindPopup(`<b>${position.name}</b><br>`).openPopup();
+              marker.bindPopup(`<b>${position.name}</b><br>`);
             });
-          }
-        //TODO: mostrare solo se non è tra le posizioni dell'utente
-        //se posizioni coincidono come se sovrascrive quel punto nella mappa
-        // add current position marker
-        this.currentCoords$.subscribe(
-          (resPosition) => {
-            if (resPosition) {
-              this.logger.debug(LOG_PREFIX + 'current coords ', resPosition.coords);
-              const latitude = resPosition.coords.latitude;
-              const longitude = resPosition.coords.longitude;
-              const here = Leaflet.marker([+latitude, +longitude], {
-                title: 'here'
-              }).addTo(this.map);
-              here.bindPopup(`<b>Sei qui!</b><br><small>Lat: ${latitude}<br>Lon: ${longitude}</small>`).openPopup();
-            }
-          }
-        );
-      });
-    }, 300);
-
+          }, 300);
+        }
+    });
   }
 
   // #TODO: se sono in hover sulla posizione nella lista attiva marker sulla mappa
