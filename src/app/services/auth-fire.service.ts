@@ -5,6 +5,7 @@ import {
   signOut, updateProfile } from '@angular/fire/auth';
 import { DataFireService } from './data-fire.service';
 import {NGXLogger} from 'ngx-logger';
+import { Observable, of } from 'rxjs';
 
 const LOG_PREFIX = '[AuthFire-Service] ';
 
@@ -14,12 +15,16 @@ const LOG_PREFIX = '[AuthFire-Service] ';
 export class AuthFireService {
 
   userData: any; //dove salvo dati user
+  // user$: Observable<User>;
+
   constructor(
     private auth: Auth,
     private datafire: DataFireService,
     private logger: NGXLogger
   ) {
       this.userData = this.getUserProfile();
+      // this.user$ = of(this.auth.currentUser);
+      // this.user$.subscribe(console.log);
    }
 
   async register({email, password, username},avatarBlob) {
@@ -57,7 +62,6 @@ export class AuthFireService {
   async updateUserName(user) {
     return updateProfile(this.auth.currentUser, {
       displayName: user.displayName,
-      // photoURL: "https://example.com/jane-q-user/profile.jpg"
     });
   }
 

@@ -13,45 +13,75 @@
     <ion-icon  name="bonfire" size="large" color="success"></ion-icon>
   </p>
 
-  <p class="ion-text-center">
-    <strong>Hi
-      <span *ngIf="user && user.displayName">{{user.displayName}} !</span>
-    </strong>
-  </p>
+  <ng-container *ngIf="user; else noUser">
+  <!-- <ng-container *ngIf="user$ | async as user; else noUser"> -->
+    <p class="ion-text-center">
+      <strong>Hi
+        <span *ngIf="user.displayName">{{user.displayName}} !</span>
+      </strong>
+    </p>
 
-  <ion-card class="ion-padding ion-text-center">
+    <!-- <ion-card *ngIf="networkStatus$ | async as networkStatus; else notConnected" class="ion-padding ion-text-center"> -->
+    <!-- <ion-card *ngIf="isNetworkAvaible; else notConnected" class="ion-padding ion-text-center"> -->
+    <ion-card class="ion-padding ion-text-center">
+      <!-- {{networkStatus}} -->
+      <ion-card-header>
+        <ion-card-title>
+          <strong>Le tue info</strong>
+        </ion-card-title>
+      </ion-card-header>
 
-    <ion-card-header>
-      <ion-card-title>
-        <strong>Le tue info</strong>
-      </ion-card-title>
-    </ion-card-header>
+      <ion-card-content>
 
-    <ion-card-content>
+        <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+          <ion-fab-button (click)="updateUserName()"
+          color="success" size="small">
+            <ion-icon name="build"></ion-icon>
+          </ion-fab-button>
+        </ion-fab>
 
-      <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-        <ion-fab-button (click)="updateUserName()"
-        color="success" size="small">
-          <ion-icon name="build"></ion-icon>
-        </ion-fab-button>
-      </ion-fab>
+        <ion-row class="ion-justify-content-center">
+          <ion-avatar class="ion-margin" (click)="updateUserPhoto()">
+            <img id="imgAvatar" *ngIf="user.photoURL; else noImgAvatar" [src]="user.photoURL" />
+            <ng-template #noImgAvatar>
+              <img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" />
+            </ng-template>
+          </ion-avatar>
+        </ion-row>
 
-      <ion-row class="ion-justify-content-center">
-        <ion-avatar class="ion-margin" (click)="updateUserPhoto()">
-          <img id="imgAvatar" *ngIf="user.photoURL; else noImgAvatar" [src]="user.photoURL" />
-          <ng-template #noImgAvatar>
-            <img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" />
-          </ng-template>
-        </ion-avatar>
-      </ion-row>
+        <ion-card-subtitle *ngIf="user.displayName">Username: {{user.displayName}}</ion-card-subtitle>
+        <ion-card-subtitle>Email: {{user.email}}</ion-card-subtitle>
+        <!-- <ion-card-subtitle>{{user | json }}</ion-card-subtitle> -->
+      </ion-card-content>
 
-      <ion-card-subtitle *ngIf="user && user.displayName">Username: {{user.displayName}}</ion-card-subtitle>
-      <ion-card-subtitle>Email: {{user.email}}</ion-card-subtitle>
-      <!-- <ion-card-subtitle>{{user | json }}</ion-card-subtitle> -->
-    </ion-card-content>
+    </ion-card>
+    <app-positions-card></app-positions-card>
+  </ng-container>
 
-  </ion-card>
+    <ng-template #noUser>
+    <ion-card class="ion-text-center">
+      <ion-card-header>
+        <ion-card-title>
+          <strong>Account non connesso</strong>
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Non è possibile risalire al tuo account</p>
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
 
-  <app-positions-card></app-positions-card>
+  <!-- <ng-template #notConnected>
+    <ion-card class="ion-text-center">
+      <ion-card-header>
+        <ion-card-title>
+          <strong>Non sei connesso</strong>
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Non risulta una connessione stabile</p>
+      </ion-card-content>
+    </ion-card>
+  </ng-template> -->
 
 </ion-content>

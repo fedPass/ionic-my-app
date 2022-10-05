@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Firestore, addDoc, updateDoc, deleteDoc, collection, collectionData, doc } from '@angular/fire/firestore';
 import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from '@angular/fire/storage';
 import { Geolocation } from '@capacitor/geolocation';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { Storage } from '@angular/fire/storage';
 import { Auth, updateProfile } from '@angular/fire/auth';
@@ -19,6 +19,7 @@ export class DataFireService {
 
   userPositions$: Observable<Position[]>;
   user: User;
+  user$: Observable<User>;
 
   constructor(
     private firestore: Firestore,
@@ -30,6 +31,9 @@ export class DataFireService {
     ) {
       this.user = this.authFirebase.currentUser;
       this.userPositions$ = this.getUserPositions(this.user);
+
+      // this.user$ = of(this.authFirebase.currentUser);
+      // this.userPositions$ = this.getUserPositions(this.user$);
      }
 
   async addPosition(position,user) {
@@ -62,13 +66,20 @@ export class DataFireService {
   //updateNamePosition + prendere img e poi fare uploadImageForUser(blob, avatar = false, docRef)
 
   getUserPositions(user) {
-    // collectionData returns a stream of documents
-    return collectionData(
-      //query
-      collection(this.firestore, `users/${user.uid}/positions`),
-      //options
-      {idField: 'id'}
-    ) as Observable<Position[]>;
+    let data = null;
+    try {
+      // collectionData returns a stream of documents (query, options)
+      data = collectionData(collection(this.firestore, `users/${user.uid}/positions`),{idField: 'id'});
+    } catch (e) {
+      this.logger.error(LOG_PREFIX + 'Error downloading positions: ', e);
+    }
+    return data as Observable<Position[]>;
+    // return collectionData(
+    //   //query
+    //   collection(this.firestore, `users/${user.uid}/positions`),
+    //   //options
+    //   {idField: 'id'}
+    // ) as Observable<Position[]>;
   }
 
   deletePosition(position,user) {

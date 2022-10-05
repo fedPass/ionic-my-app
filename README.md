@@ -188,6 +188,8 @@ nel service in cui mi serve
   npm i leaflet
   npm i --save-dev @types/leaflet 
 
+  npm install --save @types/leaflet-routing-machine //per creare percorsi
+
 ```
 
 index.html (import css and javascript for leaflet inside head)
