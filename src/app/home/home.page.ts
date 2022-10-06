@@ -8,7 +8,6 @@ import { DataFireService } from '../services/data-fire.service';
 import { CameraService } from '../services/camera.service';
 import { NetworkService } from '../services/network.service';
 import { Observable, from, of } from 'rxjs';
-import { fromPromise } from 'rxjs/internal/observable/fromPromise';
 import { NGXLogger } from 'ngx-logger';
 
 const LOG_PREFIX = '[Home-page] ';
@@ -22,8 +21,7 @@ export class HomePage implements OnInit {
   user: User;
   // user$: Observable<User>;
 
-  // networkStatus$: Observable<boolean>;
-  // isNetworkAvaible: boolean;
+  connected = true;
 
   constructor(
     private auth: AuthFireService,
@@ -34,22 +32,13 @@ export class HomePage implements OnInit {
     private network: NetworkService,
     private logger: NGXLogger
   ) {
-    // this.network.isConnectedCheck2().then(
-    //   (isConnected) => {
-    //     this.isNetworkAvaible = isConnected;
-    //   }
-    // );
-    // this.networkStatus$ = fromPromise(this.network.isConnectedCheck2());
-    // this.logger.debug(LOG_PREFIX + 'Current Network Status : ', this.networkStatus$.subscribe(console.log));
     this.user = this.auth.getUserProfile();
-    // this.logger.debug(LOG_PREFIX + 'Current User: ', this.user);
-    // this.user$ = this.auth.user$;
-    // this.logger.debug(LOG_PREFIX + 'Current OBSERVABLE User: ', this.user$.subscribe(console.log));
+    this.network.getStatusObservable().subscribe((status) => {
+      if (status) { this.connected = status.connected; }
+    });
   }
 
   ngOnInit(): void {
-    // this.networkStatus$ = fromPromise(this.network.isConnectedCheck());
-    // this.networkStatus$ = this.network.isNetworkAvaible ? of(true) : of(false);
   }
 
   async logout() {
@@ -59,12 +48,6 @@ export class HomePage implements OnInit {
   }
 
   async updateUserName() {
-    // let email = null;
-    // let name = null;
-    // this.user$.subscribe( user => {
-    //   email = user.email;
-    //   name = user.displayName;
-    // });
     const alert = await this.alertCtrl.create({
       header: 'Modifica username per "' + this.user.email + '"',
       buttons: [

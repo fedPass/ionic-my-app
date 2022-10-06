@@ -3,7 +3,10 @@ import { AlertController } from '@ionic/angular';
 import { AuthFireService, User } from 'src/app/services/auth-fire.service';
 import { DataFireService, Position } from 'src/app/services/data-fire.service';
 import { Platform } from '@ionic/angular';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { ConnectionStatus } from '@capacitor/network';
+import { NetworkService } from 'src/app/services/network.service';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-positions-card',
@@ -19,7 +22,7 @@ export class PositionsCardComponent implements OnInit {
     private auth: AuthFireService,
     private dataFire: DataFireService,
     private alertCtrl: AlertController,
-    public platform: Platform
+    public platform: Platform,
   ) {
     this.user = this.auth.getUserProfile();
     //se uso questo quando cambio user non si aggiornano le positions in home
@@ -29,7 +32,8 @@ export class PositionsCardComponent implements OnInit {
     this.isMapPage = pageUrl === 'my-map' ? true : false;
   }
 
-  ngOnInit() {}
+  async ngOnInit() {
+  }
 
   async addNewPosition() {
     const alert = await this.alertCtrl.create({

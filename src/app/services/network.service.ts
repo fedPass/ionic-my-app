@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { ConnectionStatus, Network } from '@capacitor/network';
 import { NGXLogger } from 'ngx-logger';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { fromPromise } from 'rxjs/internal-compatibility';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+
+import { PluginListenerHandle } from '@capacitor/core';
 
 const LOG_PREFIX = '[Network-Service] ';
 
@@ -13,33 +13,41 @@ const LOG_PREFIX = '[Network-Service] ';
 })
 export class NetworkService {
   isNetworkAvaible: boolean;
-  networkListener: Observable<any>;
+  netStatus: ConnectionStatus;
+
+  status$: Observable<ConnectionStatus>;
+  listener: PluginListenerHandle;
+  status = new BehaviorSubject<ConnectionStatus>(null);
 
   constructor(
-    private logger: NGXLogger
+    private logger: NGXLogger,
+    private zone: NgZone, //per aggiornarsi in automatico
   ) {
-    this.networkListener = fromPromise(this.listenerNetworkStatus());
+    this.getNetworkStatus().then(
+      (status) => {
+        this.netStatus = status;
+        this.status$ = of(status);
+      }
+    );
+
+    this.listener = Network.addListener('networkStatusChange', (status) => {
+      this.zone.run(() => {
+        this.logger.debug(LOG_PREFIX + 'Network status changed', status);
+        this.status.next(status);
+        this.netStatus = status;
+      });
+    });
    }
 
-  async listenerNetworkStatus() {
-    Network.addListener('networkStatusChange', status => {
-      this.isNetworkAvaible = status.connected;
-      this.logger.debug(LOG_PREFIX + 'Network status changed', status);
-      this.logger.debug(LOG_PREFIX + 'New Network status ', this.isNetworkAvaible);
-      // window.location.reload(); //soluzione non bella
-      return status.connected;
-    });
-  }
-
-  async isConnectedCheck(){
-    const isConnected = (await Network.getStatus()).connected;
+  async getNetworkStatus(){
+    const isConnected = (await Network.getStatus());
     this.logger.debug(LOG_PREFIX + 'Is network connected?', isConnected);
-    this.isNetworkAvaible = isConnected;
+    this.isNetworkAvaible = isConnected.connected;
     return isConnected;
   }
 
-  async isConnectedCheck2() {
-    return (await Network.getStatus()).connected;
-  }
+  public getStatusObservable(): Observable<ConnectionStatus> {
+   return this.status.asObservable();
+ }
 
 }

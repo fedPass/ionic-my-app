@@ -12,7 +12,7 @@
   <p class="ion-text-center">
     <ion-icon  name="bonfire" size="large" color="success"></ion-icon>
   </p>
-
+  <ng-container *ngIf="connected; else noConnection">
   <ng-container *ngIf="user; else noUser">
   <!-- <ng-container *ngIf="user$ | async as user; else noUser"> -->
     <p class="ion-text-center">
@@ -21,10 +21,7 @@
       </strong>
     </p>
 
-    <!-- <ion-card *ngIf="networkStatus$ | async as networkStatus; else notConnected" class="ion-padding ion-text-center"> -->
-    <!-- <ion-card *ngIf="isNetworkAvaible; else notConnected" class="ion-padding ion-text-center"> -->
     <ion-card class="ion-padding ion-text-center">
-      <!-- {{networkStatus}} -->
       <ion-card-header>
         <ion-card-title>
           <strong>Le tue info</strong>
@@ -57,6 +54,7 @@
     </ion-card>
     <app-positions-card></app-positions-card>
   </ng-container>
+</ng-container>
 
     <ng-template #noUser>
     <ion-card class="ion-text-center">
@@ -71,8 +69,8 @@
     </ion-card>
   </ng-template>
 
-  <!-- <ng-template #notConnected>
-    <ion-card class="ion-text-center">
+  <ng-template #noConnection>
+    <ion-card class="ion-text-center" color="warning">
       <ion-card-header>
         <ion-card-title>
           <strong>Non sei connesso</strong>
@@ -82,6 +80,6 @@
         <p>Non risulta una connessione stabile</p>
       </ion-card-content>
     </ion-card>
-  </ng-template> -->
+  </ng-template>
 
 </ion-content>
