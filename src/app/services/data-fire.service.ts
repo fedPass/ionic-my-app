@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { Firestore, addDoc, updateDoc, deleteDoc, collection, collectionData, doc } from '@angular/fire/firestore';
 import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from '@angular/fire/storage';
 import { Geolocation } from '@capacitor/geolocation';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 
 import { Storage } from '@angular/fire/storage';
 import { Auth, updateProfile } from '@angular/fire/auth';
 import { CameraService } from './camera.service';
-import { User } from './auth-fire.service';
+import { AuthFireService, User } from './auth-fire.service';
 import {NGXLogger} from 'ngx-logger';
 
 const LOG_PREFIX = '[DataFire-Service] ';
@@ -19,7 +19,6 @@ export class DataFireService {
 
   userPositions$: Observable<Position[]>;
   user: User;
-  user$: Observable<User>;
 
   constructor(
     private firestore: Firestore,
@@ -31,9 +30,6 @@ export class DataFireService {
     ) {
       this.user = this.authFirebase.currentUser;
       this.userPositions$ = this.getUserPositions(this.user);
-
-      // this.user$ = of(this.authFirebase.currentUser);
-      // this.userPositions$ = this.getUserPositions(this.user$);
      }
 
   async addPosition(position,user) {

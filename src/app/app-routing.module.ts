@@ -27,6 +27,11 @@ const routes: Routes = [
     loadChildren: () => import('./pages/my-map/my-map.module').then( m => m.MyMapPageModule),
     ...canActivate(redirectUnauthorizedToLogin)
   },
+  // {
+  //   path: 'my-map?lat=:lat&lon=:lon&name=:name',
+  //   loadChildren: () => import('./pages/my-map/my-map.module').then( m => m.MyMapPageModule),
+  //   ...canActivate(redirectUnauthorizedToLogin)
+  // },
   {
     path: '**',
     redirectTo: '',

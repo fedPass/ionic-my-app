@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { ConnectionStatus, Network } from '@capacitor/network';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -11,7 +11,7 @@ const LOG_PREFIX = '[Network-Service] ';
 @Injectable({
   providedIn: 'root'
 })
-export class NetworkService {
+export class NetworkService implements OnDestroy {
   isNetworkAvaible: boolean;
   netStatus: ConnectionStatus;
 
@@ -23,8 +23,10 @@ export class NetworkService {
     private logger: NGXLogger,
     private zone: NgZone, //per aggiornarsi in automatico
   ) {
-    this.getNetworkStatus().then(
-      (status) => {
+
+    Network.getStatus().then(
+      status => {
+        this.logger.debug(LOG_PREFIX + 'Is network connected?', status.connected);
         this.netStatus = status;
         this.status$ = of(status);
       }
@@ -35,19 +37,17 @@ export class NetworkService {
         this.logger.debug(LOG_PREFIX + 'Network status changed', status);
         this.status.next(status);
         this.netStatus = status;
+        this.isNetworkAvaible = status.connected;
       });
     });
    }
 
-  async getNetworkStatus(){
-    const isConnected = (await Network.getStatus());
-    this.logger.debug(LOG_PREFIX + 'Is network connected?', isConnected);
-    this.isNetworkAvaible = isConnected.connected;
-    return isConnected;
-  }
+   ngOnDestroy(): void {
+     this.listener.remove();
+   }
 
-  public getStatusObservable(): Observable<ConnectionStatus> {
-   return this.status.asObservable();
- }
+//   public getStatusObservable(): Observable<ConnectionStatus> {
+//    return this.status.asObservable();
+//  }
 
 }

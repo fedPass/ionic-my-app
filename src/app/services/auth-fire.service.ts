@@ -5,7 +5,7 @@ import {
   signOut, updateProfile } from '@angular/fire/auth';
 import { DataFireService } from './data-fire.service';
 import {NGXLogger} from 'ngx-logger';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
 const LOG_PREFIX = '[AuthFire-Service] ';
 
@@ -15,16 +15,15 @@ const LOG_PREFIX = '[AuthFire-Service] ';
 export class AuthFireService {
 
   userData: any; //dove salvo dati user
-  // user$: Observable<User>;
+  userSub = new BehaviorSubject<User>(null);
 
   constructor(
     private auth: Auth,
     private datafire: DataFireService,
     private logger: NGXLogger
   ) {
+      this.userSub.next(this.getUserProfile());
       this.userData = this.getUserProfile();
-      // this.user$ = of(this.auth.currentUser);
-      // this.user$.subscribe(console.log);
    }
 
   async register({email, password, username},avatarBlob) {
@@ -33,6 +32,8 @@ export class AuthFireService {
       const avatarFineUrl = await this.datafire.uploadImageForUser(avatarBlob, true);
       await updateProfile(user.user, { displayName: username });
       this.userData = user;
+      this.userSub.next(user.user);
+      this.logger.debug(LOG_PREFIX + 'New user register: ', user);
       return user;
     } catch (error) {
       this.logger.error(LOG_PREFIX + ' error ', error.message);
@@ -45,6 +46,9 @@ export class AuthFireService {
     try {
       const user = await signInWithEmailAndPassword(this.auth, email, password);
       this.userData = user;
+      this.userSub.next(user.user);
+      this.logger.debug(LOG_PREFIX + 'User Logged: ', user);
+
       return user;
     } catch (error) {
       return null;
@@ -52,6 +56,8 @@ export class AuthFireService {
   }
 
   async logout() {
+    this.userSub.next(null);
+    this.userData = null;
     return signOut(this.auth);
   }
 
@@ -59,9 +65,9 @@ export class AuthFireService {
     return this.auth.currentUser;
   }
 
-  async updateUserName(user) {
+  async updateUserName(newInfo) {
     return updateProfile(this.auth.currentUser, {
-      displayName: user.displayName,
+      displayName: newInfo.displayName,
     });
   }
 

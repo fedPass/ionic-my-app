@@ -46,21 +46,21 @@
                     </ion-label>
                   </ion-row>
                   <ion-row class="ion-justify-content-evenly ion-padding-bottom">
+                  <!-- #TODO: link arriva su whatsapp mozzato -->
                     <ion-button color="success"
                       href="whatsapp://send?text=Ciao, voglio condividere questo luogo con te: {{position.name}}, lat. {{position.coords.lat}} - long. {{position.coords.lon}}.
-                      Guardala meglio sulla mappa: https://www.google.com/maps/search/?api=1&query={{position.coords.lat}}%2C{{position.coords.lon}}"
+                      Guardalo sulla mappa: https://www.google.com/maps/search/?api=1&query={{position.coords.lat}}%2C{{position.coords.lon}}"
                       data-action="share/whatsapp/share"
                     >
-                      <ion-icon name="logo-whatsapp"></ion-icon>
-                    </ion-button>
-                    <ion-button color="success"
-                      href="/my-map?lat={{position.coords.lat}}&lon={{position.coords.lon}}&name={{position.name}}">
+                    <ion-icon name="logo-whatsapp"></ion-icon>
+                  </ion-button>
+                  <!-- #TODO: perchè non posso usare routerLink? -->
+                  <!-- [routerLink]="['/my-map?lat={{position.coords.lat}}&lon={{position.coords.lon}}&name={{position.name}}']" -->
+                    <ion-button
+                      href="/my-map?lat={{position.coords.lat}}&lon={{position.coords.lon}}&name={{position.name}}"
+                      color="success">
                       <ion-icon name="pin"></ion-icon>
                     </ion-button>
-                    <!-- <ion-button color="warning"
-                    href="https://www.google.com/maps/search/?api=1&query={{position.coords.lat}}%2C{{position.coords.lon}}">
-                    <ion-icon name="pin"></ion-icon>
-                  </ion-button> -->
                     <ion-button color="success" (click)="updatePosition(position)">
                       <ion-icon name="build"></ion-icon>
                     </ion-button>

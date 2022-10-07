@@ -14,7 +14,6 @@
   </p>
   <ng-container *ngIf="connected; else noConnection">
   <ng-container *ngIf="user; else noUser">
-  <!-- <ng-container *ngIf="user$ | async as user; else noUser"> -->
     <p class="ion-text-center">
       <strong>Hi
         <span *ngIf="user.displayName">{{user.displayName}} !</span>
