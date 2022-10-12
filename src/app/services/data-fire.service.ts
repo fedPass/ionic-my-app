@@ -52,7 +52,7 @@ export class DataFireService {
           // const imgUrl = await this.uploadImageForUser(blob, false, position.name.replace(' ','_'),docRef);
           const imgUrl = await this.uploadImageForUser(blob, false, docRef);
       });
-      this.logger.debug(LOG_PREFIX + 'Document written with ID: ', docRef);
+      this.logger.debug(LOG_PREFIX + 'Document written with ID: ', docRef.id);
     } catch (e) {
       this.logger.error(LOG_PREFIX + 'Error adding document: ', e);
     }

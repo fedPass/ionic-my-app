@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PositionsCardComponent } from './positions-card/positions-card.component';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { RouteReuseStrategy } from '@angular/router';
-// import { AppRoutingModule } from '../app-routing.module';
+import {RouterModule} from '@angular/router';
 
 
 
@@ -13,9 +13,9 @@ import { RouteReuseStrategy } from '@angular/router';
     PositionsCardComponent
   ],
   imports: [
-    // AppRoutingModule,
     CommonModule,
     IonicModule.forRoot(),
+    RouterModule
   ],
   exports: [
     PositionsCardComponent

@@ -8,30 +8,29 @@ const redirectLoggedInToHome = () => redirectLoggedInTo(['home']);
 const routes: Routes = [
   {
     path: '',
+    title: 'Login',
     loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule),
     ...canActivate(redirectLoggedInToHome)
   },
   {
     path: 'register',
+    title: 'Register',
     loadChildren: () => import('./pages/register/register.module').then( m => m.RegisterPageModule),
     ...canActivate(redirectLoggedInToHome)
 
   },
   {
     path: 'home',
+    title: 'Home',
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule),
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
     path: 'my-map',
+    title: 'Map',
     loadChildren: () => import('./pages/my-map/my-map.module').then( m => m.MyMapPageModule),
     ...canActivate(redirectUnauthorizedToLogin)
   },
-  // {
-  //   path: 'my-map?lat=:lat&lon=:lon&name=:name',
-  //   loadChildren: () => import('./pages/my-map/my-map.module').then( m => m.MyMapPageModule),
-  //   ...canActivate(redirectUnauthorizedToLogin)
-  // },
   {
     path: '**',
     redirectTo: '',

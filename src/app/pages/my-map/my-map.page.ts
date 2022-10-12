@@ -7,7 +7,8 @@ import { DataFireService, Position } from 'src/app/services/data-fire.service';
 import { Observable, Subscription, } from 'rxjs';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {NGXLogger} from 'ngx-logger';
-import { isPlatform, Platform } from '@ionic/angular';
+import { isPlatform } from '@ionic/angular';
+import { CurrentPosition, GeolocationService } from 'src/app/services/geolocation.service';
 
 const LOG_PREFIX = '[My-map-page] ';
 //trick per importare moduli che stanno nello stesso namespace
@@ -25,31 +26,35 @@ export class MyMapPage implements OnInit, AfterViewInit, OnDestroy {
   currentCoordsSubscription: Subscription;
   positionsListSubscription: Subscription;
   receivedPosition: Position;
+  selectedPositionSub: Subscription;
+
+  allSubscriptions: Subscription;
 
   constructor(
     private dataFire: DataFireService,
     private logger: NGXLogger,
-    private platform: Platform
+    private geoservice: GeolocationService
   ) {
     this.positionsList$ = this.dataFire.userPositions$;
     this.currentCoords$ = fromPromise(Geolocation.getCurrentPosition());
-    if (window.location.href.includes('?')) {
-      const url = new URL(window.location.href);
-      const searchParams = new URLSearchParams(url.search);
-      this.receivedPosition = {
-        coords: {
-          lat: searchParams.get('lat'),
-          lon: searchParams.get('lon')
-        },
-        name: searchParams.get('name')
-      };
-    }
+
+    this.selectedPositionSub = this.geoservice.selectedPositionSub.subscribe(
+      (res) => {
+        if(res) {
+          this.receivedPosition = res;
+        }
+      }
+    );
+    this.selectedPositionSub.add(this.allSubscriptions);
+    // this.logger.debug(LOG_PREFIX + 'Received position: ', this.receivedPosition);
   }
 
   async ngOnInit() {
     if (this.receivedPosition) {
       //create map with received coords
-      if (!isPlatform('mobile')) {
+      if (isPlatform('mobile')) {
+        this.logger.debug(LOG_PREFIX + 'received position ', this.receivedPosition.name);
+      } else {
         this.logger.debug(LOG_PREFIX + 'received position ', this.receivedPosition);
       }
       this.map = new L.Map('map');
@@ -83,13 +88,13 @@ export class MyMapPage implements OnInit, AfterViewInit, OnDestroy {
         (resPosition) => {
           this.map = new L.Map('map').setView([+resPosition.coords.latitude, +resPosition.coords.longitude], 10);
           L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              attribution: 'Map'
+            attribution: 'Map'
           }).addTo(this.map);
           if (isPlatform('mobile')) {
             this.logger.debug(LOG_PREFIX + 'current latitude ', resPosition.coords.latitude);
             this.logger.debug(LOG_PREFIX + 'current longitude ', resPosition.coords.longitude);
           } else {
-            this.logger.debug(LOG_PREFIX + 'current longitude ', resPosition.coords);
+            this.logger.debug(LOG_PREFIX + 'current coords: ', resPosition.coords);
           }
           // add current position marker
           const latitude = resPosition.coords.latitude;
@@ -98,8 +103,9 @@ export class MyMapPage implements OnInit, AfterViewInit, OnDestroy {
             title: 'here'
           }).addTo(this.map);
           here.bindPopup(`<b>Sei qui!</b><br><small>Lat: ${latitude}<br>Lon: ${longitude}</small>`).openPopup();
-        }
+      }
       );
+      this.currentCoordsSubscription.add(this.allSubscriptions);
     }
 
   }
@@ -117,21 +123,20 @@ export class MyMapPage implements OnInit, AfterViewInit, OnDestroy {
               marker.bindPopup(`<b>${position.name}</b><br>`);
               if (isPlatform('mobile')) {
               this.logger.debug(LOG_PREFIX + ' position n. ' + (i+1), position.name);
-              } else {
-              this.logger.debug(LOG_PREFIX + ' position n. ' + (i+1), position);
               }
             });
           }, 300);
+          if (!isPlatform('mobile')) {
+            this.logger.debug(LOG_PREFIX + ' positions: ', res);
+          }
         }
     });
+    this.positionsListSubscription.add(this.allSubscriptions);
   }
 
   ngOnDestroy(): void {
-    if (this.currentCoordsSubscription) {
-      this.currentCoordsSubscription.unsubscribe();
-    }
-    if (this.positionsListSubscription) {
-      this.positionsListSubscription.unsubscribe();
+    if(this.allSubscriptions) {
+      this.allSubscriptions.unsubscribe();
     }
 
   }

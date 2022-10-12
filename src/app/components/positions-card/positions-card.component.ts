@@ -7,6 +7,9 @@ import { Observable, of } from 'rxjs';
 import { ConnectionStatus } from '@capacitor/network';
 import { NetworkService } from 'src/app/services/network.service';
 import { tap } from 'rxjs/operators';
+import { GeolocationService } from 'src/app/services/geolocation.service';
+
+const LOG_PREFIX = '[Position-card-component] ';
 
 @Component({
   selector: 'app-positions-card',
@@ -23,6 +26,7 @@ export class PositionsCardComponent implements OnInit {
     private dataFire: DataFireService,
     private alertCtrl: AlertController,
     public platform: Platform,
+    private geoservice: GeolocationService
   ) {
     this.user = this.auth.getUserProfile();
     //se uso questo quando cambio user non si aggiornano le positions in home
@@ -98,6 +102,10 @@ export class PositionsCardComponent implements OnInit {
       ],
     });
     alert.present();
+  }
+
+  onSelectedPosition(position: Position) {
+    this.geoservice.onSelectedPosition(position);
   }
 
 }
