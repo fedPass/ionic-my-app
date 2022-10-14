@@ -4,9 +4,6 @@ import { AuthFireService, User } from 'src/app/services/auth-fire.service';
 import { DataFireService, Position } from 'src/app/services/data-fire.service';
 import { Platform } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
-import { ConnectionStatus } from '@capacitor/network';
-import { NetworkService } from 'src/app/services/network.service';
-import { tap } from 'rxjs/operators';
 import { GeolocationService } from 'src/app/services/geolocation.service';
 
 const LOG_PREFIX = '[Position-card-component] ';
@@ -40,18 +37,22 @@ export class PositionsCardComponent implements OnInit {
   }
 
   async addNewPosition() {
+    let newPosName = '';
     const alert = await this.alertCtrl.create({
       header: 'Inserisci un nuovo luogo visitato',
       buttons: [
         {
           text: 'Aggiungi',
           handler: (res) => {
-            this.dataFire.addPosition(
-              {
-                name: res.name,
-              },
-              this.user
-              );
+            console.log('res',res, typeof res);
+            if(res.name.length > 0) {
+              newPosName = res.name.trim();
+              console.log('newPosName',newPosName);
+              this.dataFire.addPosition(
+                {
+                  name: res.name.trim(),
+                }, this.user);
+              }
             }
           },
           {
@@ -63,10 +64,27 @@ export class PositionsCardComponent implements OnInit {
         {
           name: 'name',
           placeholder: 'Name',
+          type: 'text'
         }
       ],
     });
     alert.present();
+
+    await alert.onDidDismiss().then(
+      async () => {
+        if (newPosName === '') {
+          const errorAlert = await this.alertCtrl.create({
+            header: 'Ops! Salvataggio non riuscito! Devi Inserire un nome per inserire un nuovo luogo',
+            buttons: [
+                {
+                  text: 'Chiudi',
+                  role: 'cancel'
+                },
+          ]});
+          errorAlert.present();
+        }
+      }
+    );
   }
 
   deletePosition(position) {

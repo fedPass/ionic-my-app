@@ -9,6 +9,8 @@ import { Auth, updateProfile } from '@angular/fire/auth';
 import { CameraService } from './camera.service';
 import { AuthFireService, User } from './auth-fire.service';
 import {NGXLogger} from 'ngx-logger';
+import { GeolocationService } from './geolocation.service';
+import { map } from 'rxjs/operators';
 
 const LOG_PREFIX = '[DataFire-Service] ';
 
@@ -20,12 +22,15 @@ export class DataFireService {
   userPositions$: Observable<Position[]>;
   user: User;
 
+  currentPositionSubscription: Subscription;
+
   constructor(
     private firestore: Firestore,
     private authFirebase: Auth,
     private storage: Storage,
     private cameraService: CameraService,
-    private logger: NGXLogger
+    private logger: NGXLogger,
+    private geoservice: GeolocationService
 
     ) {
       this.user = this.authFirebase.currentUser;
@@ -39,7 +44,6 @@ export class DataFireService {
       lon : coords.coords.longitude,
       alt : coords.coords.altitude,
     };
-
     try {
       const docRef = await addDoc(collection(this.firestore, `users/${user.uid}/positions`), {
         name: position.name,
@@ -49,17 +53,43 @@ export class DataFireService {
       });
       await this.cameraService.getPhotoByCamera()
       .then( async (blob) => {
-          // const imgUrl = await this.uploadImageForUser(blob, false, position.name.replace(' ','_'),docRef);
-          const imgUrl = await this.uploadImageForUser(blob, false, docRef);
+        const imgUrl = await this.uploadImageForUser(blob, false, docRef);
       });
       this.logger.debug(LOG_PREFIX + 'Document written with ID: ', docRef.id);
     } catch (e) {
       this.logger.error(LOG_PREFIX + 'Error adding document: ', e);
     }
-  }
 
-  // #TODO: per aggiornare sia nome che foto positione dovrei fare:
-  //updateNamePosition + prendere img e poi fare uploadImageForUser(blob, avatar = false, docRef)
+    // this.currentPositionSubscription = this.geoservice.getCurrentPosition().pipe(
+    //   map( (geoCoords) => {
+    //     position.coords = {
+    //       lat : geoCoords.coords.latitude,
+    //       lon : geoCoords.coords.longitude,
+    //       alt : geoCoords.coords.altitude,
+    //     };
+    //   })
+    // ).subscribe(
+    //   async () => {
+    // try {
+    //   const docRef = await addDoc(collection(this.firestore, `users/${user.uid}/positions`), {
+    //     name: position.name,
+    //     coords: position.coords,
+    //     created: this.getNowISOString(),
+    //     photoUrl: null
+    //   });
+    //   await this.cameraService.getPhotoByCamera()
+    //   .then( async (blob) => {
+    //     const imgUrl = await this.uploadImageForUser(blob, false, docRef);
+    //   });
+    //   this.logger.debug(LOG_PREFIX + 'Document written with ID: ', docRef.id);
+    // } catch (e) {
+    //   this.logger.error(LOG_PREFIX + 'Error adding document: ', e);
+    // }
+    //   }
+    // );
+
+    // this.currentPositionSubscription.unsubscribe();
+  }
 
   getUserPositions(user) {
     let data = null;
@@ -157,7 +187,7 @@ export class DataFireService {
 }
 
 export interface Position {
-  name: string;
+  name?: string;
   coords: Coords;
   photoUrl?: string;
   created?: string;

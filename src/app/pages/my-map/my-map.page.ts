@@ -2,13 +2,13 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import 'leaflet';
 // import {L} from 'leaflet';
 import 'leaflet-routing-machine';
-import { Geolocation } from '@capacitor/geolocation';
 import { DataFireService, Position } from 'src/app/services/data-fire.service';
-import { Observable, Subscription, } from 'rxjs';
-import {fromPromise} from 'rxjs/internal-compatibility';
+import { Observable, of, Subscription, } from 'rxjs';
 import {NGXLogger} from 'ngx-logger';
 import { isPlatform } from '@ionic/angular';
 import { CurrentPosition, GeolocationService } from 'src/app/services/geolocation.service';
+import { Router } from '@angular/router';
+import { tap } from 'rxjs/operators';
 
 const LOG_PREFIX = '[My-map-page] ';
 //trick per importare moduli che stanno nello stesso namespace
@@ -22,13 +22,13 @@ declare let L: any;
 export class MyMapPage implements OnInit, AfterViewInit, OnDestroy {
   map: L.Map;
   positionsList$: Observable<Position[]>;
-  currentCoords$: Observable<any>;
   currentCoordsSubscription: Subscription;
   positionsListSubscription: Subscription;
   receivedPosition: Position;
   selectedPositionSub: Subscription;
 
   allSubscriptions: Subscription;
+  currentCoords: CurrentPosition | any;
 
   constructor(
     private dataFire: DataFireService,
@@ -36,9 +36,8 @@ export class MyMapPage implements OnInit, AfterViewInit, OnDestroy {
     private geoservice: GeolocationService
   ) {
     this.positionsList$ = this.dataFire.userPositions$;
-    this.currentCoords$ = fromPromise(Geolocation.getCurrentPosition());
 
-    this.selectedPositionSub = this.geoservice.selectedPositionSub.subscribe(
+    this.selectedPositionSub = this.geoservice.selectedPosition$.subscribe(
       (res) => {
         if(res) {
           this.receivedPosition = res;
@@ -46,68 +45,63 @@ export class MyMapPage implements OnInit, AfterViewInit, OnDestroy {
       }
     );
     this.selectedPositionSub.add(this.allSubscriptions);
-    // this.logger.debug(LOG_PREFIX + 'Received position: ', this.receivedPosition);
+    this.logger.debug(LOG_PREFIX + 'Received position: ', this.receivedPosition);
   }
 
   async ngOnInit() {
-    if (this.receivedPosition) {
-      //create map with received coords
-      if (isPlatform('mobile')) {
-        this.logger.debug(LOG_PREFIX + 'received position ', this.receivedPosition.name);
-      } else {
-        this.logger.debug(LOG_PREFIX + 'received position ', this.receivedPosition);
-      }
-      this.map = new L.Map('map');
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(this.map);
-
-      this.currentCoordsSubscription = this.currentCoords$.subscribe(
-        (resCurrPos) => {
+    this.currentCoordsSubscription = this.geoservice.getCurrentPosition()
+    .subscribe(
+      (currentCoords) => {
+        const currentLat = +currentCoords.coords.latitude;
+        const currentLon = +currentCoords.coords.longitude;
+        // this.logger.debug(LOG_PREFIX + 'getCurrentPosition ', this.currentCoords);
+        this.map = new L.Map('map');
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(this.map);
+        if ((this.receivedPosition)
+          && ((currentLat !== +this.receivedPosition.coords.lat) && (currentLon !== +this.receivedPosition.coords.lon))
+        )
+         {
+          //create map with received coords
+          if (isPlatform('mobile')) {
+            this.logger.debug(LOG_PREFIX + 'received position ', this.receivedPosition.name);
+          } else {
+            this.logger.debug(LOG_PREFIX + 'received position ', this.receivedPosition);
+          }
           //traccia percorso da posizione corrente a punto ricevuto
           L.Routing.control({
             waypoints: [
-              L.latLng(+resCurrPos.coords.latitude, +resCurrPos.coords.longitude),
+              L.latLng(currentLat, currentLon),
               L.latLng(+this.receivedPosition.coords.lat, +this.receivedPosition.coords.lon)
             ],
             routeWhileDragging: true,
             autoRoute: true,
             showAlternatives: true,
-            show: false,
-            z: 10
+            show: false
             //router: new L.Routing.OSRMv1({ serviceUrl: mapConfigs.osrmUrl }), //per la versione prod ci vorrebbe un serviceUrl
           }).addTo(this.map);
-          //riposiziona su posto corrente e fai zoom (se no parte dal mondo)
-          this.map.setView([+resCurrPos.coords.latitude, +resCurrPos.coords.latitude]);
-        }
-      );
-    } else {
-      // create map with current coords
-      this.currentCoordsSubscription = this.currentCoords$.subscribe(
-        (resPosition) => {
-          this.map = new L.Map('map').setView([+resPosition.coords.latitude, +resPosition.coords.longitude], 10);
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: 'Map'
-          }).addTo(this.map);
+          this.map.setView([currentLat, currentLat],10);
+        } else {
           if (isPlatform('mobile')) {
-            this.logger.debug(LOG_PREFIX + 'current latitude ', resPosition.coords.latitude);
-            this.logger.debug(LOG_PREFIX + 'current longitude ', resPosition.coords.longitude);
+            this.logger.debug(LOG_PREFIX + 'current latitude ', currentLat);
+            this.logger.debug(LOG_PREFIX + 'current longitude ', currentLon);
           } else {
-            this.logger.debug(LOG_PREFIX + 'current coords: ', resPosition.coords);
+            this.logger.debug(LOG_PREFIX + 'current coords: ', currentCoords.coords);
           }
           // add current position marker
-          const latitude = resPosition.coords.latitude;
-          const longitude = resPosition.coords.longitude;
-          const here = L.marker([+latitude, +longitude], {
+          this.map.setView([currentLat, currentLon],5);
+          const here = L.marker([currentLat, currentLon], {
             title: 'here'
           }).addTo(this.map);
-          here.bindPopup(`<b>Sei qui!</b><br><small>Lat: ${latitude}<br>Lon: ${longitude}</small>`).openPopup();
-      }
-      );
-      this.currentCoordsSubscription.add(this.allSubscriptions);
-    }
-
+          here.bindPopup(`<b>Sei qui!</b><br><small>Lat: ${currentLat}<br>Lon: ${currentLon}</small>`).openPopup();
+        }
+      },
+      error => {
+        this.logger.error(LOG_PREFIX + 'getCurrentPosition failed', error);
+      },
+    );
+    this.currentCoordsSubscription.add(this.allSubscriptions);
   }
 
   ngAfterViewInit() {
