@@ -33,6 +33,7 @@ const routes: Routes = [
   },
   {
     path: 'earthquake-list',
+    title: 'Eartquake List',
     loadChildren: () => import('./pages/earthquake-list/earthquake-list.module').then( m => m.EarthquakeListPageModule)
   },
   {
