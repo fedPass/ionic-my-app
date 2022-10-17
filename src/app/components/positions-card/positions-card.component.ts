@@ -36,56 +36,56 @@ export class PositionsCardComponent implements OnInit {
   async ngOnInit() {
   }
 
-  async addNewPosition() {
-    let newPosName = '';
-    const alert = await this.alertCtrl.create({
-      header: 'Inserisci un nuovo luogo visitato',
-      buttons: [
-        {
-          text: 'Aggiungi',
-          handler: (res) => {
-            console.log('res',res, typeof res);
-            if(res.name.length > 0) {
-              newPosName = res.name.trim();
-              console.log('newPosName',newPosName);
-              this.dataFire.addPosition(
-                {
-                  name: res.name.trim(),
-                }, this.user);
-              }
-            }
-          },
-          {
-            text: 'Chiudi',
-            role: 'cancel'
-          },
-    ],
-      inputs: [
-        {
-          name: 'name',
-          placeholder: 'Name',
-          type: 'text'
-        }
-      ],
-    });
-    alert.present();
+  // async addNewPosition() {
+  //   let newPosName = '';
+  //   const alert = await this.alertCtrl.create({
+  //     header: 'Inserisci un nuovo luogo visitato',
+  //     buttons: [
+  //       {
+  //         text: 'Aggiungi',
+  //         handler: (res) => {
+  //           console.log('res',res, typeof res);
+  //           if(res.name.length > 0) {
+  //             newPosName = res.name.trim();
+  //             console.log('newPosName',newPosName);
+  //             this.dataFire.addPosition(
+  //               {
+  //                 name: res.name.trim(),
+  //               }, this.user);
+  //             }
+  //           }
+  //         },
+  //         {
+  //           text: 'Chiudi',
+  //           role: 'cancel'
+  //         },
+  //   ],
+  //     inputs: [
+  //       {
+  //         name: 'name',
+  //         placeholder: 'Name',
+  //         type: 'text'
+  //       }
+  //     ],
+  //   });
+  //   alert.present();
 
-    await alert.onDidDismiss().then(
-      async () => {
-        if (newPosName === '') {
-          const errorAlert = await this.alertCtrl.create({
-            header: 'Ops! Salvataggio non riuscito! Devi Inserire un nome per inserire un nuovo luogo',
-            buttons: [
-                {
-                  text: 'Chiudi',
-                  role: 'cancel'
-                },
-          ]});
-          errorAlert.present();
-        }
-      }
-    );
-  }
+  //   await alert.onDidDismiss().then(
+  //     async () => {
+  //       if (newPosName === '') {
+  //         const errorAlert = await this.alertCtrl.create({
+  //           header: 'Ops! Salvataggio non riuscito! Devi Inserire un nome per inserire un nuovo luogo',
+  //           buttons: [
+  //               {
+  //                 text: 'Chiudi',
+  //                 role: 'cancel'
+  //               },
+  //         ]});
+  //         errorAlert.present();
+  //       }
+  //     }
+  //   );
+  // }
 
   deletePosition(position) {
     this.dataFire.deletePosition(position,this.user);

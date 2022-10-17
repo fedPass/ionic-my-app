@@ -1,0 +1,20 @@
+ion-card {
+  border: 1px solid var(--ion-color-success, #2dd36f);
+
+  // ion-item {
+  //   border-bottom: 1px solid var(--ion-color-success, #2dd36f);
+  // }
+
+  // ion-item:last-child {
+  //   border-bottom: none;
+  // }
+
+  .position-item {
+    border-bottom: 1px solid var(--ion-color-success, #2dd36f);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+

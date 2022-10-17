@@ -51,12 +51,20 @@
       </ion-card-content>
 
     </ion-card>
-    <ion-row class="ion-justify-content-center">
-      <ion-button [routerLink]="['/earthquake-list']" color="warning">
-        <ion-icon name="eye" class="ion-padding-end"></ion-icon>
-        Visualizza eventi sismici
-      </ion-button>
-    </ion-row>
+    <ion-button expand="block" color="success" (click)="addNewPosition()" class="ion-margin">
+      <ion-icon name="add" class="ion-padding-end"></ion-icon>
+      Aggiungi nuovo luogo
+    </ion-button>
+    <ion-button [routerLink]="['/earthquake-list']" color="warning" expand="block" class="ion-margin">
+      <ion-icon name="eye" class="ion-padding-end"></ion-icon>
+      Visualizza eventi sismici
+    </ion-button>
+    <ion-grid>
+      <ion-row class="ion-justify-content-center">
+      </ion-row>
+      <ion-row class="ion-justify-content-center">
+      </ion-row>
+    </ion-grid>
     <app-positions-card></app-positions-card>
   </ng-container>
 </ng-container>

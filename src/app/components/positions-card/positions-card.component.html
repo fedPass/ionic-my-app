@@ -1,35 +1,36 @@
 <ion-card>
 
   <ion-card-header>
-    <ion-card-title class="ion-text-center">
-      <strong >Lista luoghi visitati</strong>
+    <ion-card-title class="ion-text-center" color="success">
+      <h2><strong >Lista luoghi visitati</strong></h2>
     </ion-card-title>
   </ion-card-header>
 
   <ion-card-content>
 
-    <ion-button expand="full" color="success" (click)="addNewPosition()" >
+    <!-- <ion-button expand="full" color="success" (click)="addNewPosition()" >
       <ion-icon name="add" class="ion-padding-end"></ion-icon>
       Aggiungi nuovo luogo
-    </ion-button>
+    </ion-button> -->
 
       <ng-container *ngIf="positionsList$ | async as positionsList; else loadingPositionsList">
-        <ion-button *ngIf="!isMapPage"
-          expand="full" color="warning"
-          [routerLink]="['/my-map']"
-          (click)="onSelectedPosition(null)"
-          class="ion-margin-top">
-          <ion-icon name="map" class="ion-padding-end"></ion-icon>
-          Visualizza la tua mappa
-        </ion-button>
+        <ion-row class="ion-justify-content-center">
+          <ion-button *ngIf="!isMapPage"
+            color="success"
+            [routerLink]="['/my-map']"
+            (click)="onSelectedPosition(null)">
+            <ion-icon name="map" class="ion-padding-end"></ion-icon>
+            Visualizza la tua mappa
+          </ion-button>
+        </ion-row>
 
         <ion-grid *ngIf="positionsList.length > 0; else noPositionsList">
           <ion-row class="ion-border-bottom" >
             <ion-col *ngFor="let position of positionsList"
               size="12" size-md="6" size-lg="4" size-xl="3"
-              class="ion-border">
+              class="position-item">
               <!-- <ion-item [attr.lines]="positionsList.length <= 4 ? 'none' : null"> -->
-              <ion-item>
+              <ion-item lines="none">
                 <ion-grid>
                   <ion-row class="ion-justify-content-evenly ion-padding-vertical">
                     <ion-avatar *ngIf="position.photoUrl, else iconPin">
