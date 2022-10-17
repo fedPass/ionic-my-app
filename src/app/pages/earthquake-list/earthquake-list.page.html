@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-toolbar color="success">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Lista eventi sismici</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ng-container *ngIf="earthquakeList$ | async as eventList">
+
+    <ion-grid>
+      <ion-label class="ion-text-center" color="success" position="fixed">
+        <ion-row>
+          <ion-col size="3">
+              <h3><strong>Data</strong></h3>
+          </ion-col>
+          <ion-col size="6">
+              <h3><strong>Luogo</strong></h3>
+          </ion-col>
+          <ion-col size="3">
+            <h3><strong>Magnitudo</strong></h3>
+          </ion-col>
+        </ion-row>
+      </ion-label>
+
+      <ion-item *ngFor="let event of eventList" class="ion-text-center">
+        <ion-col size="3">
+          <div>
+            <p><small>{{event.dateText | slice:0:10 }}</small></p>
+            <p><small>{{event.dateText | slice:11:16 }}</small></p>
+          </div>
+        </ion-col>
+
+        <ion-col size="6">
+          <div><p>{{event.descriptionText}}</p></div>
+        </ion-col>
+
+        <ion-col size="3">
+          <div><p>{{event.magnitudeText}}</p></div>
+        </ion-col>
+
+      </ion-item>
+    </ion-grid>
+  </ng-container>
+
+</ion-content>

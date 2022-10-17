@@ -24,7 +24,7 @@
         </ion-button>
 
         <ion-grid *ngIf="positionsList.length > 0; else noPositionsList">
-          <ion-row>
+          <ion-row class="ion-border-bottom" >
             <ion-col *ngFor="let position of positionsList"
               size="12" size-md="6" size-lg="4" size-xl="3"
               class="ion-border">

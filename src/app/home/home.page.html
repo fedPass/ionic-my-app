@@ -51,6 +51,12 @@
       </ion-card-content>
 
     </ion-card>
+    <ion-row class="ion-justify-content-center">
+      <ion-button [routerLink]="['/earthquake-list']" color="warning">
+        <ion-icon name="eye" class="ion-padding-end"></ion-icon>
+        Visualizza eventi sismici
+      </ion-button>
+    </ion-row>
     <app-positions-card></app-positions-card>
   </ng-container>
 </ng-container>

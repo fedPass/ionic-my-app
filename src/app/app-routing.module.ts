@@ -32,10 +32,14 @@ const routes: Routes = [
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
+    path: 'earthquake-list',
+    loadChildren: () => import('./pages/earthquake-list/earthquake-list.module').then( m => m.EarthquakeListPageModule)
+  },
+  {
     path: '**',
     redirectTo: '',
     pathMatch: 'full'
-  }
+  },
 ];
 
 @NgModule({

@@ -19,7 +19,6 @@ const LOG_PREFIX = '[Home-page] ';
 })
 export class HomePage implements OnInit, OnDestroy {
   user: User;
-
   connected = true;
   userSub: Subscription;
   networkSub: Subscription;
@@ -31,7 +30,7 @@ export class HomePage implements OnInit, OnDestroy {
     private data: DataFireService,
     private cameraService: CameraService,
     private network: NetworkService,
-    private logger: NGXLogger
+    private logger: NGXLogger,
   ) {  }
 
   ngOnInit(): void {
